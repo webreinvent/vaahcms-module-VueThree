@@ -1,7 +1,7 @@
 <template  >
     <div>
-        <h1 v-if="heading" class="title">
-            {{heading}}
+        <h1 v-if="data" class="title">
+            {{data.heading}}
         </h1>
 
         <section>
@@ -12,10 +12,4 @@
     </div>
 </template>
 
-<script lang="ts" setup>
-
-import {ref} from "vue";
-
-const heading = ref("Dashboard");
-
-</script>
+<script lang="ts" src="./Dashboard.ts"></script>
