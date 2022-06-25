@@ -1,4 +1,4 @@
-<script lang="ts" src="./Dashboard.ts"></script>
+<script  src="./Dashboard.js"></script>
 <template  >
     <div>
         <h1 v-if="data" class="title">

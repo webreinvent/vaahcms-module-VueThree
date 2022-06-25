@@ -1,5 +1,5 @@
-let routes= <any> [];
-let routes_list= <any> {};
+let routes= [];
+let routes_list= [];
 
 import Default from '../layouts/Default.vue';
 import Dashboard from '../pages/dashboard/Dashboard.vue'

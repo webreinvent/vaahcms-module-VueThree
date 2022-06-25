@@ -1,4 +1,4 @@
-<script lang="ts" src="./List.ts"></script>
+<script  src="./List.js"></script>
 <template>
 
     <div>

@@ -1,5 +1,5 @@
-let routes= <any> [];
-let routes_list= <any> {};
+let routes= [];
+let routes_list= [];
 
 import List from '../pages/articles/List.vue'
 

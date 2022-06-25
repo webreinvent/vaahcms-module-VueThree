@@ -7,11 +7,8 @@ export default {
         /*const {vaah} = useVaah();
 */
 
-        interface useVaah {
-            vaah: object,
-        }
 
-        const vaah = inject<unknown>('vaah');
+        const vaah = inject('vaah');
 
 
         // @ts-ignore

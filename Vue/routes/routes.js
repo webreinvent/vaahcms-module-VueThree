@@ -1,4 +1,4 @@
-let routes= <any> [];
+let routes= [];
 
 import articles from "./vue-routes-articles";
 import dashboard from "./vue-routes-dashboard";
