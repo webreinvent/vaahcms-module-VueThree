@@ -5,7 +5,12 @@ export default {
     setup()
     {
         /*const {vaah} = useVaah();
+*/
 
+        const vaah = inject('vaah');
+
+
+        vaah.test();
 
         onMounted(async () => {
             await vaah.ajax(
@@ -14,13 +19,10 @@ export default {
                 null,
                 'get'
             );
-        });*/
+        });
 
 
-        const vaah = inject('vaah');
 
-
-        vaah.test();
 
         /*
         |--------------------------------------------------------------------------
