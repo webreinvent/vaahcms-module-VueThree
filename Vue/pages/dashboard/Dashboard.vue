@@ -2,7 +2,7 @@
 <template  >
     <div>
         <h1 v-if="data" class="title">
-            {{data.heading}}
+            {{data.heading}} v2
         </h1>
 
         <section>

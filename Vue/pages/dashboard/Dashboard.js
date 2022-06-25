@@ -1,21 +1,13 @@
 import {reactive, ref, inject, onMounted} from "vue";
-//import useVaah from '@/vaahvue/vue-three/useVaah';
 
 export default {
     setup()
     {
-        /*const {vaah} = useVaah();
-*/
+         const vaah = inject('vaah');
 
-
-        const vaah = inject('vaah');
-
-
-        // @ts-ignore
         vaah.test();
 
         onMounted(async () => {
-            // @ts-ignore
             await vaah.ajax(
                 'https://gorest.co.in/public/v2/users',
                 {},

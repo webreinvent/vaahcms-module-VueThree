@@ -3,7 +3,7 @@ import axios from "axios";
 
 
 export default {
-    install: (app:any, options: object | null) =>
+    install: (app, options) =>
     {
         const vaah = {
 
@@ -13,8 +13,8 @@ export default {
 
 
             ajax: async function (
-                url: string, params: object, callback = null,
-                method: string = 'get', query = null,
+                url, params, callback = null,
+                method = 'get', query = null,
                 headers = null
             ) {
 
@@ -26,12 +26,7 @@ export default {
                     'X-Requested-With': 'XMLHttpRequest',
                 };
 
-                type  Qr = {
-                    params: string | null;
-                    headers: string;
-                }
-
-                let q = <Qr>{};
+                let q = {};
 
                 q.params = query;
 
@@ -44,7 +39,7 @@ export default {
                         params: params
                     };
                     params = query;
-                    q = <Qr>{};
+                    q = {};
                     /*axios.interceptors.request.use(
                         function (config) {
                             config.paramsSerializer = function (params) {
@@ -71,7 +66,7 @@ export default {
                 console.log('--->', url);
                 // @ts-ignore
                 let ajax = await axios[method](url, params, q)
-                    .then(function (response: any) {
+                    .then(function (response) {
                         console.log('--->', response);
                         /*self.processResponse(response);
                         if(callback)
@@ -86,7 +81,7 @@ export default {
                             }
                         }*/
                         return response;
-                    }).catch(function (error: any) {
+                    }).catch(function (error) {
 
                         console.log('error--->', error);
 
