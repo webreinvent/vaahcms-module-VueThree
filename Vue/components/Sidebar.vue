@@ -4,8 +4,8 @@
             General
         </p>
         <ul class="menu-list">
-            <li><RouterLink to="/dashboard">Dashboard</RouterLink></li>
-            <li><RouterLink to="/about">About</RouterLink></li>
+            <li><RouterLink to="/">Dashboard</RouterLink></li>
+            <li><RouterLink to="/articles">Articles</RouterLink></li>
         </ul>
 
     </aside>
