@@ -7,12 +7,18 @@ export default {
         /*const {vaah} = useVaah();
 */
 
-        const vaah = inject('vaah');
+        interface useVaah {
+            vaah: object,
+        }
+
+        const vaah = inject<unknown>('vaah');
 
 
+        // @ts-ignore
         vaah.test();
 
         onMounted(async () => {
+            // @ts-ignore
             await vaah.ajax(
                 'https://gorest.co.in/public/v2/users',
                 {},

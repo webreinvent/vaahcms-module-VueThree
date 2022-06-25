@@ -3,7 +3,8 @@ import axios from "axios";
 
 
 export default {
-    install: (app, options) => {
+    install: (app:any, options: object | null) =>
+    {
         const vaah = {
 
             test: function () {
