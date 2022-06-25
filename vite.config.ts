@@ -13,6 +13,7 @@ export default defineConfig({
   },
 
     build: {
+        target: "esnext",
         outDir: 'Resources/assets/build/',
         rollupOptions: {
             output: {
