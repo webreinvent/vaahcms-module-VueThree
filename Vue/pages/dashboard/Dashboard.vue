@@ -1,3 +1,4 @@
+<script lang="ts" src="./Dashboard.ts"></script>
 <template  >
     <div>
         <h1 v-if="data" class="title">
@@ -12,4 +13,4 @@
     </div>
 </template>
 
-<script lang="ts" src="./Dashboard.ts"></script>
+
