@@ -6,17 +6,9 @@ import Dashboard from '../pages/dashboard/Dashboard.vue'
 
 routes_list = {
     path: '/',
-    component: Default,
+    name: 'dashboard',
+    component: Dashboard,
     props: true,
-    children: [
-        {
-            path: '/',
-            name: 'dashboard',
-            component: Dashboard,
-            props: true,
-        },
-
-    ]
 };
 
 routes.push(routes_list);

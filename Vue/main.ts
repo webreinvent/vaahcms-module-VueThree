@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import {createApp} from 'vue';
 import { createPinia } from 'pinia'
 import Oruga from '@oruga-ui/oruga-next'
 import { bulmaConfig } from '@oruga-ui/theme-bulma'
@@ -8,8 +8,11 @@ import routerConfig from './routes/config'
 
 const app = createApp(App);
 
+
 app.use(Oruga, bulmaConfig);
-app.use(createPinia())
-app.use(routerConfig)
+app.use(createPinia());
+app.use(routerConfig);
 
 app.mount('#appVueThree')
+
+

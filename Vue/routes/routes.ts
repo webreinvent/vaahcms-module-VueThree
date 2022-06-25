@@ -1,7 +1,7 @@
 let routes= <any> [];
 
-import dashboard from "./vue-routes-dashboard";
 import articles from "./vue-routes-articles";
+import dashboard from "./vue-routes-dashboard";
 
 
 routes = routes.concat(dashboard);

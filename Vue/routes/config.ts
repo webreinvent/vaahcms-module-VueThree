@@ -1,13 +1,20 @@
 import { createRouter,  createWebHashHistory  } from 'vue-router'
-var qs = require('qs');
-
 
 import routes from "./routes";
+import Default from "@/layouts/Default.vue";
+
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: routes,
-    parseQuery(query) {
+  routes: [
+      {
+          path: '/',
+          component: Default,
+          props: true,
+          children: routes
+      }
+  ],
+/*    parseQuery(query) {
         return qs.parse(query);
     },
     stringifyQuery(query) {
@@ -18,7 +25,7 @@ const router = createRouter({
                 skipNulls: true
             });
         return result ? ('?' + result) : '';
-    }
+    }*/
 })
 
 export default router
