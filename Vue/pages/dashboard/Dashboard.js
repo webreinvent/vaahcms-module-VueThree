@@ -3,6 +3,8 @@ import {reactive, ref, inject, onMounted} from "vue";
 export default {
     setup()
     {
+
+
          const vaah = inject('vaah');
 
         vaah.test();

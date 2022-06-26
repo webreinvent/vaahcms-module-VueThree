@@ -1,6 +1,24 @@
-<script setup lang="ts">
-import Sidebar from '@/components/Sidebar.vue';
+<script setup>
+import Sidebar from '../components/Sidebar.vue';
+import {onMounted} from "vue";
+
+import { useMainStore } from '../stores/main'
+import {reactive} from "vue";
+
+const main = useMainStore();
+
+const data = reactive({
+    is_loading: null,
+    main_assets: null,
+})
+
+onMounted(async () => {
+    await main.getAssets();
+});
+
+
 </script>
+
 
 <template>
 
@@ -12,6 +30,10 @@ import Sidebar from '@/components/Sidebar.vue';
             </div>
 
             <div class="column">
+
+                {{data}}
+                {{main.assets}}
+
                 <RouterView />
             </div>
 

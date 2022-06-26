@@ -18,7 +18,4 @@ app.use(routerConfig);
 import vaah from './vaahvue/vue-three/vaah';
 app.use(vaah);
 
-
 app.mount('#appVueThree')
-
-

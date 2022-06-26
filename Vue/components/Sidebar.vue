@@ -11,8 +11,6 @@
     </aside>
 </template>
 
-<script lang="ts" setup>
-
-
+<script>
 
 </script>
