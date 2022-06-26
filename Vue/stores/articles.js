@@ -138,7 +138,7 @@ export const useArticlesStore = defineStore({
         },
         closeForm()
         {
-            
+
 
         },
         setRegisteredBy()
