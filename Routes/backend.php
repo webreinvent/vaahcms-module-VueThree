@@ -27,3 +27,6 @@ Route::group(
             ->name( 'vh.backend.vuethree.assets' );
         //------------------------------------------------
     });
+
+
+include("backend/routes-articles.php");

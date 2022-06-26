@@ -5,7 +5,7 @@ import {onMounted} from "vue";
 import { useMainStore } from '../stores/main'
 import {reactive} from "vue";
 
-const main = useMainStore();
+const mainStore = useMainStore();
 
 const data = reactive({
     is_loading: null,
@@ -13,7 +13,7 @@ const data = reactive({
 })
 
 onMounted(async () => {
-    await main.getAssets();
+    await mainStore.getAssets();
 });
 
 
@@ -32,7 +32,7 @@ onMounted(async () => {
             <div class="column">
 
                 {{data}}
-                {{main.assets}}
+                {{mainStore.assets}}
 
                 <RouterView />
             </div>
