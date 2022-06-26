@@ -30,10 +30,6 @@ onMounted(async () => {
             </div>
 
             <div class="column">
-
-                {{data}}
-                {{mainStore.assets}}
-
                 <RouterView />
             </div>
 

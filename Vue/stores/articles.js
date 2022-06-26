@@ -60,20 +60,28 @@ export const useArticlesStore = defineStore({
             if(data)
             {
                 this.assets = data;
-                this.item = data.empty_item;
+                this.item = this.vaah.clone(data.empty_item);
             }
         },
         async getList() {
-            this.vaah.ajax(
+
+
+
+            await this.vaah.ajax(
                 this.ajax_url,
                 this.afterGetList
             );
         },
         afterGetList: function (data, res)
         {
+
+
+
             if(data)
             {
                 this.list = data.list;
+                console.log('afterGetList--->', data);
+
             }
         },
         async setFormAction(action)
@@ -100,9 +108,15 @@ export const useArticlesStore = defineStore({
         },
         afterCreate(data, res)
         {
+
             if(data)
             {
-                this.item = this.assets.empty_item;
+                console.log('data--->', data);
+                this.item = this.vaah.clone(this.assets.empty_item);
+                console.log('this.item--->', this.item);
+
+                this.getList();
+
             }
         },
         async paginate() {
@@ -123,8 +137,11 @@ export const useArticlesStore = defineStore({
         {
 
         },
-        resetQuery()
+        async resetQuery()
         {
+
+            console.log('--->resetQuery');
+            await this.getList();
 
         },
 
@@ -138,6 +155,7 @@ export const useArticlesStore = defineStore({
         },
         closeForm()
         {
+            this.$router.push({name: 'articles.index'})
 
 
         },

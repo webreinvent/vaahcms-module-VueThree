@@ -1,4 +1,4 @@
-import {createApp} from 'vue';
+import {createApp, markRaw} from 'vue';
 import { createPinia } from 'pinia'
 import Oruga from '@oruga-ui/oruga-next'
 
@@ -11,7 +11,14 @@ import routerConfig from './routes/config'
 
 const app = createApp(App);
 
+const pinia = createPinia();
+pinia.use(({ store }) => {
+    store.$router = markRaw(routerConfig)
+});
 
+
+app.use(pinia);
+app.use(routerConfig);
 
 const orugaConfig = {
     iconPack: 'fas',
@@ -21,8 +28,9 @@ const orugaConfig = {
 
 
 app.use(Oruga, orugaConfig);
-app.use(createPinia());
-app.use(routerConfig);
+
+
+
 
 
 import vaah from './vaahvue/vue-three/vaah';

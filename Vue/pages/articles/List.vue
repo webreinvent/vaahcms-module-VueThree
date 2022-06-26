@@ -17,9 +17,13 @@ onMounted(async () => {
 
     <div class="columns" v-if="store.assets">
 
+
+
+
         <!--left-->
         <div class="column" :class="{'is-6': store.view !== 'large'}">
 
+            <pre>{{store.list}}</pre>
 
             <!--card-->
             <div class="card" >
@@ -29,6 +33,10 @@ onMounted(async () => {
 
                     <div class="card-header-title">
                         Brands
+                        <span v-if="store.list"
+                              class="tag has-margin-left-5">
+                            {{store.list.total}}
+                        </span>
 
                         <!--                        <o-tag v-if="store.list"
                                                        class="has-margin-left-5">
@@ -302,7 +310,7 @@ onMounted(async () => {
                                                        type="is-dark">
                                                 <p class="control" >
 
-                                                    <o-button @click="resetQuery()"
+                                                    <o-button @click="store.resetQuery()"
                                                               icon-left="times">
                                                     </o-button>
                                                 </p>

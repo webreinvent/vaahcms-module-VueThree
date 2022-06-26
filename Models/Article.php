@@ -117,7 +117,7 @@ class Article extends Model
         $item = self::where('name', $inputs['name'])->first();
 
         if ($item) {
-            $response['failed'] = true;
+            $response['success'] = false;
             $response['messages'][] = "This name is already exist.";
             return $response;
         }
@@ -126,7 +126,7 @@ class Article extends Model
         $item = self::where('slug', $inputs['slug'])->first();
 
         if ($item) {
-            $response['failed'] = true;
+            $response['success'] = false;
             $response['messages'][] = "This slug is already exist.";
             return $response;
         }
@@ -221,7 +221,7 @@ class Article extends Model
         if ($validator->fails()) {
 
             $errors = errorsToArray($validator->errors());
-            $response['failed'] = true;
+            $response['success'] = false;
             $response['errors'] = $errors;
             return $response;
         }
@@ -313,7 +313,7 @@ class Article extends Model
         $inputs = $request->all();
 
         $validation = self::validation($inputs);
-        if (isset($validation['failed'])) {
+        if (!$validation['success']) {
             return $validation;
         }
 
@@ -322,7 +322,7 @@ class Article extends Model
             ->where('name', $inputs['name'])->first();
 
         if ($user) {
-            $response['failed'] = true;
+            $response['success'] = false;
             $response['messages'][] = "This name is already exist.";
             return $response;
         }
@@ -332,7 +332,7 @@ class Article extends Model
             ->where('slug', $inputs['slug'])->first();
 
         if ($user) {
-            $response['failed'] = true;
+            $response['success'] = false;
             $response['messages'][] = "This slug is already exist.";
             return $response;
         }
@@ -369,7 +369,7 @@ class Article extends Model
     {
         $update = self::where('id', $id)->withTrashed()->first();
         if (!$update) {
-            $response['failed'] = true;
+            $response['success'] = false;
             $response['messages'][] = 'Record does not exist.';
             return $response;
         }
@@ -396,7 +396,7 @@ class Article extends Model
         $validator = \Validator::make($inputs, $rules);
         if ($validator->fails()) {
             $messages = $validator->errors();
-            $response['failed'] = true;
+            $response['success'] = false;
             $response['messages'] = $messages;
             return $response;
         }

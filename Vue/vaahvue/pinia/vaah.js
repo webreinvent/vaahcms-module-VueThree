@@ -93,11 +93,19 @@ export const vaah = defineStore({
         //----------------------------------------------------------
         processResponse: function(response)
         {
-            if(response.data.failed && response.data.messages)
+            if(
+                (response.data.failed || response.data.success === false)
+                && response.data.messages
+            )
             {
                 this.toastErrors(response.data.messages);
             }
-            if(response.data.success && response.data.messages)
+
+            if(
+                response.data.success
+                && response.data.success === true
+                && response.data.messages
+            )
             {
                 this.toastSuccess(response.data.messages);
             }
@@ -183,6 +191,14 @@ export const vaah = defineStore({
                 });
             }
         },
+        //----------------------------------------------------------
+        clone: function (source)
+        {
+            return JSON.parse(JSON.stringify(source));
+        },
+        //----------------------------------------------------------
+        //----------------------------------------------------------
+        //----------------------------------------------------------
 
 
     }
