@@ -28,7 +28,9 @@ export const useArticlesStore = defineStore({
                 sort: null,
             },
         },
-        action: null,
+        action: {
+            items: [],
+        },
         search: {
             delay_time: 600, // time delay in milliseconds
             delay_timer: 0 // time delay in milliseconds
@@ -47,7 +49,12 @@ export const useArticlesStore = defineStore({
         is_list_loading: null,
         count_filters: 0,
     }),
-    getters: {},
+    getters: {
+        updateState(state, payload)
+        {
+            state[payload.key] = payload.value
+        }
+    },
     actions: {
         async getAssets() {
             this.vaah.ajax(
@@ -64,9 +71,6 @@ export const useArticlesStore = defineStore({
             }
         },
         async getList() {
-
-
-
             await this.vaah.ajax(
                 this.ajax_url,
                 this.afterGetList
@@ -74,15 +78,15 @@ export const useArticlesStore = defineStore({
         },
         afterGetList: function (data, res)
         {
-
-
-
             if(data)
             {
-                this.list = data.list;
-                console.log('afterGetList--->', data);
-
+                this.list = data;
             }
+        },
+        async reload()
+        {
+            await this.getAssets();
+            await this.getList();
         },
         async setFormAction(action)
         {
@@ -137,12 +141,9 @@ export const useArticlesStore = defineStore({
         {
 
         },
-        async resetQuery()
+        resetQuery()
         {
-
-            console.log('--->resetQuery');
-            await this.getList();
-
+            this.getList();
         },
 
         resetNewItem()
@@ -162,6 +163,37 @@ export const useArticlesStore = defineStore({
         setRegisteredBy()
         {
 
+        },
+        isViewLarge()
+        {
+
+        },
+        setRowClass()
+        {
+
+        },
+        changeStatus()
+        {
+
+        },
+        setActiveItem()
+        {
+
+        },
+        getIdWidth()
+        {
+            let width = 50;
+            if(this.list && this.list.total)
+            {
+                let chrs = this.list.total.toString();
+                chrs = chrs.length;
+                console.log('--->', chrs);
+                width = chrs*20;
+            }
+
+            console.log('--->', width);
+
+            return width;
         },
 
     }

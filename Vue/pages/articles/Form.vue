@@ -36,7 +36,6 @@ onMounted(async () => {
                         <p class="control">
                             <o-button v-if="store.form.type ==='Update'"
                                       icon-left="edit"
-                                      variant="light"
                                       :loading="store.form.is_button_loading"
                                       @click="store.setFormAction('save')">
                                 Save
@@ -44,7 +43,6 @@ onMounted(async () => {
 
                             <o-button v-else
                                       icon-left="edit"
-                                      variant="light"
                                       :loading="store.form.is_button_loading"
                                       @click="store.setFormAction('save-and-new')">
                                 Save & New
@@ -88,16 +86,14 @@ onMounted(async () => {
 
 
                         <p class="control" v-if="store.item && store.item.id">
-                            <o-button variant="light"
-                                      @click="store.backToView()"
+                            <o-button @click="store.backToView()"
                                       icon-left="arrow-left">
                             </o-button>
                         </p>
 
 
                         <p class="control">
-                            <o-button variant="light"
-                                      @click="store.closeForm()"
+                            <o-button @click="store.closeForm()"
                                       icon-left="times">
                             </o-button>
                         </p>

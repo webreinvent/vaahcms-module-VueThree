@@ -1,7 +1,6 @@
 
 <template>
-    <div>
-        <h1 class="title">App</h1>
+    <div class="oruga">
         <RouterView />
     </div>
 </template>
