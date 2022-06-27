@@ -1,14 +1,15 @@
 <script setup>
 import { useArticlesStore } from '../../../stores/articles'
-
 const store = useArticlesStore();
-
 </script>
 
 <template>
+
     <div v-if="store.list">
+        {{store.action}}
+
         <o-table :data="store.list.length ? [] : store.list.data"
-                 :checked-rows.sync="store.action.items"
+                 v-model:checkedRows="store.action.items"
                  checkbox-position="left"
                  :checkable="store.isViewLarge()"
                  :hoverable="true"

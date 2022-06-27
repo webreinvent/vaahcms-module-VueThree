@@ -20,17 +20,19 @@ const store = useArticlesStore();
 
                         <div class="control">
                             <o-dropdown class="is-paddingless"
+                                        :trapFocus="false"
+                                        :itemActiveClass="''"
                                         aria-role="list">
 
                                 <template #trigger="{ active }">
                                     <o-button
-                                        type="is-outlined"
                                         :icon-right="active ? 'angle-up' : 'angle-down'"
                                         icon-left="edit">
                                     </o-button>
                                 </template>
 
                                 <o-dropdown-item @click="store.updateList('active')"
+
                                                  aria-role="listitem">
                                     Mark as active
                                 </o-dropdown-item>
@@ -108,7 +110,6 @@ const store = useArticlesStore();
 
                                     <template #trigger>
                                         <o-button
-                                            type="is-outlined"
                                             :label="'Filters ('+store.count_filters+')'"
                                             icon-left="filter">
                                         </o-button>

@@ -20,6 +20,8 @@ pinia.use(({ store }) => {
 app.use(pinia);
 app.use(routerConfig);
 
+
+bulmaConfig.dropdown.itemActiveClass = '';
 const orugaConfig = {
     iconPack: 'fas',
     ...bulmaConfig

@@ -23,5 +23,8 @@
 
 
     </div>
+    <div id="oruga-components" class="oruga">
+
+    </div>
 
 @endsection

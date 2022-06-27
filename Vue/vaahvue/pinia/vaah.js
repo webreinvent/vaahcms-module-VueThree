@@ -169,6 +169,7 @@ export const vaah = defineStore({
             if(data && data.html !== "")
             {
                 Notification.open({
+                    container: '#oruga-components',
                     position: 'top',
                     message: data.html,
                     closable: true,
@@ -183,11 +184,12 @@ export const vaah = defineStore({
             if(data && data.html !== "")
             {
                 Notification.open({
+                    container: '#oruga-components',
                     position: 'top',
                     closable: true,
                     message: data.html,
                     variant: 'danger',
-                    duration: data.duration
+                    duration: 50000
                 });
             }
         },

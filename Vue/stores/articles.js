@@ -17,6 +17,7 @@ let empty_query = {
 };
 
 let empty_action = {
+    type: null,
     items: [],
 };
 
@@ -160,8 +161,30 @@ export const useArticlesStore = defineStore({
         async paginate() {
 
         },
-        async updateList(){
+        async updateList(type){
 
+            if(!type)
+            {
+                vaah().toastErrors(['Select an action type']);
+                return false;
+            }
+            this.action.type = type;
+            if(this.action.items.length < 1)
+            {
+                vaah().toastErrors(['Select a record']);
+                return false;
+            }
+
+            let params = this.action;
+            let url = this.ajax_url;
+            vaah().ajax(url, this.updateListAfter, params, 'put');
+        },
+        async updateListAfter(data, res) {
+            if(data)
+            {
+                this.action = vaah().clone(this.empty_action);
+                await this.getList();
+            }
         },
         confirmDelete()
         {
@@ -205,7 +228,7 @@ export const useArticlesStore = defineStore({
             } else{
                 this.count_filters = 0;
             }
-            
+
         },
         async updateQueryFromUrl(route)
         {
@@ -291,11 +314,8 @@ export const useArticlesStore = defineStore({
             {
                 let chrs = this.list.total.toString();
                 chrs = chrs.length;
-                console.log('--->', chrs);
                 width = chrs*20;
             }
-
-            console.log('--->', width);
 
             return width;
         },
