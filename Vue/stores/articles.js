@@ -189,6 +189,24 @@ export const useArticlesStore = defineStore({
         confirmDelete()
         {
 
+            if(this.action.items.length < 1)
+            {
+                vaah().toastErrors(['Select a record']);
+                return false;
+            }
+
+            let self = this;
+            this.$buefy.dialog.confirm({
+                title: 'Deleting record',
+                message: 'Are you sure you want to <b>delete</b> the records? This action cannot be undone.',
+                confirmText: 'Delete',
+                type: 'is-danger',
+                hasIcon: true,
+                onConfirm: function () {
+                    self.deleteList('delete');
+                }
+            })
+
         },
         async delayedSearch()
         {
