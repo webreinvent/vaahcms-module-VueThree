@@ -1,36 +1,38 @@
-import {defineStore} from 'pinia'
-import axios from 'axios'
-import { vaah } from '../vaahvue/pinia/vaah'
+import {watch} from 'vue'
+import {defineStore, acceptHMRUpdate} from 'pinia'
+import qs from 'qs'
+import {vaah} from '../vaahvue/pinia/vaah'
 
-
-//---------Variables
 let base_url = document.getElementsByTagName('base')[0].getAttribute("href");
-//---------/Variables
-
 let ajax_url = base_url + "/backend/vuethree/articles";
+
+let empty_query = {
+    page: null,
+    filter: {
+        q: null,
+        is_active: null,
+        trashed: null,
+        sort: null,
+    },
+};
+
+let empty_action = {
+    items: [],
+};
 
 export const useArticlesStore = defineStore({
     id: 'articles',
     state: () => ({
         base_url: base_url,
         ajax_url: ajax_url,
-        vaah: vaah(),
         assets: null,
         list: null,
         item: null,
         fillable:null,
-        query: {
-            q: null,
-            page: null,
-            filter: {
-                is_active: null,
-                trashed: null,
-                sort: null,
-            },
-        },
-        action: {
-            items: [],
-        },
+        empty_query:empty_query,
+        empty_action:empty_action,
+        query: vaah().clone(empty_query),
+        action: vaah().clone(empty_action),
         search: {
             delay_time: 600, // time delay in milliseconds
             delay_timer: 0 // time delay in milliseconds
@@ -53,11 +55,49 @@ export const useArticlesStore = defineStore({
         updateState(state, payload)
         {
             state[payload.key] = payload.value
-        }
+        },
+        getState(state)
+        {
+            return state
+        },
+        watchStates()
+        {
+            watch(this.query.filter, (newVal,oldVal) =>
+                {
+                    console.log('--->', newVal);
+
+                    this.query.filter = newVal;
+
+                    this.delayedSearch();
+                },
+             { deep: true }
+            )
+        },
+
+
     },
     actions: {
+        watchRoutes(route)
+        {
+            watch(route, (newVal,oldVal) =>
+                {
+                    switch(route.name)
+                    {
+                        case 'articles.form':
+                            this.view = 'small';
+                        break;
+                        default:
+                            this.view = 'large';
+                        break
+                    }
+
+                },
+                { deep: true }
+            )
+
+        },
         async getAssets() {
-            this.vaah.ajax(
+            vaah().ajax(
                 this.ajax_url+'/assets',
                 this.afterGetAssets
             );
@@ -67,19 +107,21 @@ export const useArticlesStore = defineStore({
             if(data)
             {
                 this.assets = data;
-                this.item = this.vaah.clone(data.empty_item);
+                this.item = vaah().clone(data.empty_item);
             }
         },
         async getList() {
-            await this.vaah.ajax(
+            await vaah().ajax(
                 this.ajax_url,
-                this.afterGetList
+                this.afterGetList,
+                this.query
             );
         },
         afterGetList: function (data, res)
         {
             if(data)
             {
+                console.log('list data--->', data);
                 this.list = data;
             }
         },
@@ -97,13 +139,10 @@ export const useArticlesStore = defineStore({
                 case 'save-and-new':
                     await this.create();
                     break;
-
-
             }
-
         },
         async create() {
-            this.vaah.ajax(
+            vaah().ajax(
                 ajax_url,
                 this.afterCreate,
                 this.item,
@@ -112,15 +151,10 @@ export const useArticlesStore = defineStore({
         },
         afterCreate(data, res)
         {
-
             if(data)
             {
-                console.log('data--->', data);
-                this.item = this.vaah.clone(this.assets.empty_item);
-                console.log('this.item--->', this.item);
-
+                this.item = vaah().clone(this.assets.empty_item);
                 this.getList();
-
             }
         },
         async paginate() {
@@ -133,19 +167,82 @@ export const useArticlesStore = defineStore({
         {
 
         },
-        delayedSearch()
+        async delayedSearch()
         {
+            let self = this;
+            this.query.page = 1;
+            this.action.items = [];
+
+            clearTimeout(this.search.delay_timer);
+            this.search.delay_timer = setTimeout(async function() {
+                await self.updateUrlQueryString(self.query);
+                await self.getList();
+            }, this.search.delay_time);
+
 
         },
-        clearSearch()
+        async updateUrlQueryString(query)
         {
+            //remove reactivity from source object
+            query = vaah().clone(query)
+
+            //create query string
+            let query_string = qs.stringify(query, {
+                skipNulls: true
+            });
+            let query_object = qs.parse(query_string);
+
+            //reset url query string
+            await this.$router.replace({query: null});
+
+            //replace url query string
+            await this.$router.replace({query: query_object});
+
+            //update applied filters
+            if(query_object && query_object.filter)
+            {
+                this.count_filters = Object.keys(query_object.filter).length;
+            } else{
+                this.count_filters = 0;
+            }
+            
+        },
+        async updateQueryFromUrl(route)
+        {
+            if(Object.keys(route.query).length > 0)
+            {
+                for(let key in route.query)
+                {
+                    this.query[key] = route.query[key]
+                }
+            }
 
         },
-        resetQuery()
+        async clearSearch()
         {
-            this.getList();
+            this.query.filter.q = null;
+            await this.updateUrlQueryString(this.query);
+            await this.getList();
         },
+        async resetQuery()
+        {
+            //reset query strings
+            await this.resetQueryString();
 
+            //reload page list
+            await this.getList();
+        },
+        async resetQueryString()
+        {
+            for(let key in this.query.filter)
+            {
+                this.query.filter[key] = null;
+            }
+
+            console.log('--->', this.query.filter);
+
+            await this.updateUrlQueryString(this.query);
+        },
         resetNewItem()
         {
 
@@ -166,6 +263,13 @@ export const useArticlesStore = defineStore({
         },
         isViewLarge()
         {
+
+            if(this.view === 'large')
+            {
+                return true;
+            }
+
+            return false;
 
         },
         setRowClass()
@@ -195,6 +299,10 @@ export const useArticlesStore = defineStore({
 
             return width;
         },
-
     }
 })
+
+// Pinia hot reload
+if (import.meta.hot) {
+    import.meta.hot.accept(acceptHMRUpdate(useArticlesStore, import.meta.hot))
+}

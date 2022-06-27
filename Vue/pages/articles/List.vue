@@ -1,5 +1,6 @@
 <script setup>
 import {onMounted} from "vue";
+import { useRoute } from 'vue-router';
 
 import { useMainStore } from '../../stores/main'
 import { useArticlesStore } from '../../stores/articles'
@@ -9,11 +10,16 @@ import Actions from './components/Actions.vue';
 
 const mainStore = useMainStore();
 const store = useArticlesStore();
+const route = useRoute();
 
 onMounted(async () => {
+    await store.updateQueryFromUrl(route);
     await store.getAssets();
     await store.getList();
+    store.watchRoutes(route);
+    store.watchStates;
 });
+
 
 </script>
 <template>
@@ -62,12 +68,6 @@ onMounted(async () => {
 
                 </header>
                 <!--/header-->
-
-                <div class="field">
-                    <o-radio native-value="default">
-                        Default
-                    </o-radio>
-                </div>
 
                 <!--content-->
                 <div class="card-content">

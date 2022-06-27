@@ -25,7 +25,8 @@ const router = createRouter({
                 encode: false,
                 skipNulls: true
             });
-        return result ? ('?' + result) : '';
+        //return result ? ('?' + result) : '';
+        return result;
     }
 })
 

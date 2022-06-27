@@ -144,51 +144,85 @@ class Article extends Model
     }
 
     //-------------------------------------------------
-    public static function getList($request)
+    public function scopeGetSorted($query, $filter)
     {
 
-
-        if (isset($request->sort)) {
-
-            $sort = $request->sort;
-            if (Str::contains($request->sort, ':')) {
-                $sort = explode(":", $request->sort);
-                $list = self::orderBy($sort[0], $sort[1]);
-            } else {
-                $list = self::orderBy($sort, 'asc');
-            }
-        } else {
-            $list = self::orderBy('id', 'desc');
+        if(!isset($filter['sort']))
+        {
+            return $query->orderBy('id', 'desc');
         }
 
-        if (isset($request['filter']['is_active'])) {
-            if ($request['filter']['is_active'] == "true") {
-                $list->where('is_active', 1);
-            } else {
-                $list->where(function ($q) {
-                    $q->where('is_active', 0);
-                    $q->orWhereNull('is_active');
-                });
-            }
+        $sort = $filter['sort'];
+
+        $direction = Str::contains($sort, ':');
+
+        if(!$direction)
+        {
+            return $query->orderBy($sort, 'asc');
         }
 
-        if (isset($request['filter']['trashed'])) {
-            if ($request['filter']['trashed'] === 'include') {
-                $list->withTrashed();
-            }
+        $sort = explode(':', $sort);
 
-            if ($request['filter']['trashed'] === 'only') {
-                $list->onlyTrashed();
-            }
+        return $query->orderBy($sort[0], $sort[1]);
+    }
+    //-------------------------------------------------
+    public function scopeIsActiveFilter($query, $filter)
+    {
 
+        if(!isset($filter['is_active']))
+        {
+            return $query;
+        }
+        $is_active = $filter['is_active'];
+
+        if($is_active === 'true' || $is_active === true)
+        {
+            return $query->whereNotNull('is_active');
+        } else{
+            return $query->whereNull('is_active');
         }
 
-        if (isset($request->q)) {
-            $list->where(function ($q) use ($request) {
-                $q->where('name', 'LIKE', '%' . $request->q . '%')
-                    ->orWhere('slug', 'LIKE', '%' . $request->q . '%');
-            });
+    }
+    //-------------------------------------------------
+    public function scopeTrashedFilter($query, $filter)
+    {
+
+        if(!isset($filter['trashed']))
+        {
+            return $query;
         }
+        $trashed = $filter['trashed'];
+
+        if($trashed === 'include')
+        {
+            return $query->withTrashed();
+        } else if($trashed === 'only'){
+            return $query->onlyTrashed();
+        }
+
+    }
+    //-------------------------------------------------
+    public function scopeSearchFilter($query, $filter)
+    {
+
+        if(!isset($filter['q']))
+        {
+            return $query;
+        }
+        $search = $filter['q'];
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'LIKE', '%' . $search . '%')
+                ->orWhere('slug', 'LIKE', '%' . $search . '%');
+        });
+
+    }
+    //-------------------------------------------------
+    public static function getList($request)
+    {
+        $list = self::getSorted($request->filter);
+        $list->isActiveFilter($request->filter);
+        $list->trashedFilter($request->filter);
+        $list->searchFilter($request->filter);
 
         $list = $list->paginate(config('vaahcms.per_page'));
 

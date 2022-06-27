@@ -8,9 +8,6 @@ const store = useArticlesStore();
 <template>
     <div>
 
-        <o-radio name="sort">
-            Updated (Ascending)
-        </o-radio>
 
         <!--large view - actions-->
         <div  v-if="store.view === 'large'" class="level">
@@ -86,7 +83,7 @@ const store = useArticlesStore();
                     <o-field>
 
                         <o-input placeholder="Search"
-                                 v-model="store.query.q"
+                                 v-model="store.query.filter.q"
                                  @input="store.delayedSearch"
                                  @keyup.enter.prevent="store.delayedSearch"
                                  icon="search"
@@ -193,7 +190,7 @@ const store = useArticlesStore();
                                                     <p class="mb-1"><b>Sort By</b></p>
 
                                                     <o-field>
-                                                        <o-radio v-model="store.query.sort"
+                                                        <o-radio v-model="store.query.filter.sort"
                                                                  :native-value="null"
                                                                  name="sort">
                                                             None
@@ -201,7 +198,7 @@ const store = useArticlesStore();
                                                     </o-field>
 
                                                     <o-field>
-                                                        <o-radio v-model="store.query.sort"
+                                                        <o-radio v-model="store.query.filter.sort"
                                                                  native-value="updated_at"
                                                                  name="sort">
                                                             Updated (Ascending)
@@ -209,7 +206,7 @@ const store = useArticlesStore();
                                                     </o-field>
 
                                                     <o-field>
-                                                        <o-radio v-model="store.query.sort"
+                                                        <o-radio v-model="store.query.filter.sort"
                                                                  native-value="updated_at:desc"
                                                                  name="sort">
                                                             Updated (Descending)
@@ -219,20 +216,7 @@ const store = useArticlesStore();
                                                 </div>
 
 
-                                                <div class="filter mb-2">
-                                                    <p class="mb-1"><b>Page</b></p>
 
-                                                    <o-field>
-                                                        <o-field>
-                                                            <o-input
-                                                                native-min="1"
-                                                                v-model="store.query.page">
-                                                            </o-input>
-                                                        </o-field>
-                                                    </o-field>
-
-                                                    <hr/>
-                                                </div>
                                             </div>
 
                                         </div>
@@ -271,14 +255,14 @@ const store = useArticlesStore();
         <o-field v-else>
 
             <o-input placeholder="Search"
-                     v-model="store.query.q"
+                     v-model="store.query.filter.q"
                      @input="store.delayedSearch"
                      @keyup.enter.prevent="store.delayedSearch"
                      icon="search"
                      expanded
                      icon-right="close-circle"
                      icon-right-clickable
-                     @icon-right-click="store.query.q = ''">
+                     @icon-right-click="store.query.filter.q = ''">
             </o-input>
 
         </o-field>

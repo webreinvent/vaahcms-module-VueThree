@@ -1,8 +1,10 @@
-<script  src="./Dashboard.js"></script>
+<script  setup>
+
+</script>
 <template  >
     <div>
-        <h1 v-if="data" class="title">
-            {{data.heading}} v2
+        <h1  class="title">
+            Dashboard
         </h1>
 
         <section>
