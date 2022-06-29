@@ -2,7 +2,7 @@ import { createRouter,  createWebHashHistory  } from 'vue-router'
 import qs from 'qs';
 
 import routes from "./routes";
-import Default from "@/layouts/Default.vue";
+import Default from "../layouts/Default.vue";
 
 
 const router = createRouter({

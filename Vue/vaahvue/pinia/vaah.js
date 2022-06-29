@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia'
 import axios from 'axios'
 import qs from "qs";
-import {NotificationProgrammatic as Notification} from "@oruga-ui/oruga-next";
+import {ElNotification} from "element-plus";
 
 
 export const vaah = defineStore({
@@ -136,7 +136,7 @@ export const vaah = defineStore({
         {
             let i = 1;
             let list_html = "";
-            let duration = 1000;
+            let duration = 3000;
 
             if(Object.keys(messages).length > 1)
             {
@@ -158,6 +158,8 @@ export const vaah = defineStore({
 
             duration = duration*(chars/readable);
 
+            console.log('duration--->', duration);
+
             return {
                 html: list_html,
                 duration: duration
@@ -168,13 +170,14 @@ export const vaah = defineStore({
             let data = this.getMessageAndDuration(messages);
             if(data && data.html !== "")
             {
-                Notification.open({
-                    container: '#oruga-components',
-                    position: 'top',
+                ElNotification({
+                    type: 'success',
+                    icon: 'warning',
+                    customClass: 'notification-success',
+                    position: 'top-right',
                     message: data.html,
-                    closable: true,
-                    variant: 'success',
-                    duration: data.duration
+                    duration: data.duration,
+                    appendTo: '#element-plus-notifications'
                 });
             }
         },
@@ -183,14 +186,16 @@ export const vaah = defineStore({
             let data = this.getMessageAndDuration(messages);
             if(data && data.html !== "")
             {
-                Notification.open({
-                    container: '#oruga-components',
-                    position: 'top',
-                    closable: true,
+                ElNotification({
+                    type: 'error',
+                    icon: 'warning',
+                    customClass: 'notification-error',
+                    offset: 68,
+                    position: 'top-right',
                     message: data.html,
-                    variant: 'danger',
-                    duration: 50000
-                });
+                    duration: data.duration,
+                    appendTo: '#element-plus-notifications'
+                })
             }
         },
         //----------------------------------------------------------

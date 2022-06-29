@@ -1,4 +1,5 @@
-<script setup>
+<script  setup>
+import {ref} from 'vue';
 import { useArticlesStore } from '../../../stores/articles'
 
 const store = useArticlesStore();
@@ -8,266 +9,140 @@ const store = useArticlesStore();
 <template>
     <div>
 
-
         <!--large view - actions-->
-        <div  v-if="store.view === 'large'" class="level">
+        <el-row justify="space-between" v-if="store.isViewLarge()">
+            <el-col :span="8" >
 
-            <!--left-->
-            <div class="level-left" >
-                <div  class="level-item">
+                <el-space>
 
-                    <o-field>
+                    <el-dropdown placement="bottom-start">
+                        <el-button icon="arrow-down" >
 
-                        <div class="control">
-                            <o-dropdown class="is-paddingless"
-                                        :trapFocus="false"
-                                        :itemActiveClass="''"
-                                        aria-role="list">
+                            <el-tag effect="plain" round v-if="store.action.items.length > 0">
+                                {{store.action.items.length}}
+                            </el-tag>
 
-                                <template #trigger="{ active }">
-                                    <o-button
-                                        :icon-right="active ? 'angle-up' : 'angle-down'"
-                                        icon-left="edit">
-                                    </o-button>
-                                </template>
-
-                                <o-dropdown-item @click="store.updateList('active')"
-
-                                                 aria-role="listitem">
-                                    Mark as active
-                                </o-dropdown-item>
-
-                                <o-dropdown-item @click="store.updateList('inactive')"
-                                                 aria-role="listitem">
-                                    Mark as inactive
-                                </o-dropdown-item>
-                                <hr class="dropdown-divider">
-
-                                <o-dropdown-item @click="store.updateList('trash')"
-                                                 aria-role="listitem">
-                                    <o-icon icon="trash"></o-icon>
+                        </el-button>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item @click="store.updateList('active')">Mark as active</el-dropdown-item>
+                                <el-dropdown-item @click="store.updateList('inactive')">Mark as inactive</el-dropdown-item>
+                                <el-dropdown-item divided
+                                                  @click="store.updateList('trash')"
+                                                  icon="minus">
                                     Trash
-                                </o-dropdown-item>
-
-                                <o-dropdown-item @click="store.confirmDelete()"
-                                                 aria-role="listitem">
-                                    <o-icon type="is-danger is-light"
-                                            icon="trash-alt"></o-icon>
-                                    Delete
-                                </o-dropdown-item>
-
-                                <o-dropdown-item @click="store.updateList('restore')"
-                                                 aria-role="listitem">
-                                    <o-icon type="is-success is-light"
-                                            icon="trash"></o-icon>
+                                </el-dropdown-item>
+                                <el-dropdown-item icon="refresh-left"
+                                                  @click="store.updateList('restore')">
                                     Restore
-                                </o-dropdown-item>
+                                </el-dropdown-item>
+                                <el-dropdown-item icon="delete" @click="store.updateList('delete')">
+                                    Delete
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
 
+                    <el-dropdown placement="bottom-start">
+                        <el-button icon="more-filled" >
 
-                            </o-dropdown>
-                        </div>
-
-
-                    </o-field>
-
-                </div>
-            </div>
-            <!--/left-->
-
-
-            <!--right-->
-            <div class="level-right">
-
-
-
-                <div class="level-item">
-
-                    <o-field>
-
-                        <o-input placeholder="Search"
-                                 v-model="store.query.filter.q"
-                                 @input="store.delayedSearch"
-                                 @keyup.enter.prevent="store.delayedSearch"
-                                 icon="search"
-                                 icon-right="close-circle"
-                                 icon-right-clickable
-                                 @icon-right-click="store.clearSearch">
-                        </o-input>
-
-                    </o-field>
-
-                </div>
-
-
-                <div class="level-item">
-
-                    <o-field grouped>
-                        <o-field>
-                            <div class="control">
-                                <o-dropdown class="is-paddingless"
-                                            position="bottom-left"
-                                            aria-role="list">
-
-                                    <template #trigger>
-                                        <o-button
-                                            :label="'Filters ('+store.count_filters+')'"
-                                            icon-left="filter">
-                                        </o-button>
-                                    </template>
-
-
-                                    <o-dropdown-item
-                                        aria-role="menu-item"
-                                        :focusable="false"
-                                        tag="div">
-
-                                        <div class="columns is-paddingless is-multiline is-marginless filters" style="width: 400px;">
-
-                                            <div class="column is-6">
-                                                <div class="filter mb-2">
-                                                    <p class="mb-1"><b>Is Active</b></p>
-
-                                                    <o-field>
-                                                        <o-radio v-model="store.query.filter.is_active"
-                                                                 :native-value="null"
-                                                                 name="is_active">
-                                                            All
-                                                        </o-radio>
-                                                    </o-field>
-
-                                                    <o-field>
-                                                        <o-radio v-model="store.query.filter.is_active"
-                                                                 native-value="true"
-                                                                 name="is_active">
-                                                            Only Active
-                                                        </o-radio>
-                                                    </o-field>
-
-                                                    <o-field>
-                                                        <o-radio v-model="store.query.filter.is_active"
-                                                                 native-value="false"
-                                                                 name="is_active">
-                                                            Only Inactive
-                                                        </o-radio>
-                                                    </o-field>
-
-                                                    <hr/>
-                                                </div>
-
-                                                <div class="filter mb-2">
-                                                    <p class="mb-1"><b>Include</b></p>
-
-                                                    <o-field>
-                                                        <o-radio v-model="store.query.filter.trashed"
-                                                                 :native-value="null"
-                                                                 name="trashed">
-                                                            Exclude Trashed
-                                                        </o-radio>
-
-                                                    </o-field>
-
-                                                    <o-field>
-                                                        <o-radio v-model="store.query.filter.trashed"
-                                                                 native-value="include"
-                                                                 name="trashed">
-                                                            Include Trashed
-                                                        </o-radio>
-
-                                                    </o-field>
-
-                                                    <o-field>
-                                                        <o-radio v-model="store.query.filter.trashed"
-                                                                 native-value="only"
-                                                                 name="trashed">
-                                                            Only Trashed
-                                                        </o-radio>
-                                                    </o-field>
-                                                    <hr/>
-                                                </div>
-
-                                            </div>
-                                            <div class="column is-6">
-                                                <div class="filter mb-2">
-                                                    <p class="mb-1"><b>Sort By</b></p>
-
-                                                    <o-field>
-                                                        <o-radio v-model="store.query.filter.sort"
-                                                                 :native-value="null"
-                                                                 name="sort">
-                                                            None
-                                                        </o-radio>
-                                                    </o-field>
-
-                                                    <o-field>
-                                                        <o-radio v-model="store.query.filter.sort"
-                                                                 native-value="updated_at"
-                                                                 name="sort">
-                                                            Updated (Ascending)
-                                                        </o-radio>
-                                                    </o-field>
-
-                                                    <o-field>
-                                                        <o-radio v-model="store.query.filter.sort"
-                                                                 native-value="updated_at:desc"
-                                                                 name="sort">
-                                                            Updated (Descending)
-                                                        </o-radio>
-                                                    </o-field>
-                                                    <hr/>
-                                                </div>
+                        </el-button>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item>Mark all as active</el-dropdown-item>
+                                <el-dropdown-item>Mark all as inactive</el-dropdown-item>
+                                <el-dropdown-item divided icon="minus">Trash All</el-dropdown-item>
+                                <el-dropdown-item icon="refresh-left">Restore All</el-dropdown-item>
+                                <el-dropdown-item icon="delete">Delete All</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
 
 
 
-                                            </div>
-
-                                        </div>
-
-                                    </o-dropdown-item>
+                </el-space>
 
 
-                                </o-dropdown>
-                            </div>
+            </el-col>
+            <el-col :span="10" style="text-align: right;">
+
+                <el-space>
+
+                    <el-input
+                        class="w-50 m-2"
+                        v-model="store.query.filter.q"
+                        placeholder="Search"
+                        prefix-icon="search"
+                    />
+
+                    <el-button-group>
+
+                        <el-button icon="filter" @click="store.show_filters = true">
+                            Filters  <el-tag effect="plain" style="margin-left: 5px;" round>2</el-tag>
+                        </el-button>
 
 
-                            <o-tooltip label="Reset Filters"
-                                       variant="dark">
-                                <p class="control" >
-                                    <o-button @click="store.resetQuery()"
-                                              icon-left="times">
-                                    </o-button>
-                                </p>
-                            </o-tooltip>
+                        <el-button icon="close" @click="store.show_filters = true">
+                        </el-button>
 
-                        </o-field>
+                    </el-button-group>
 
 
+                </el-space>
 
-                    </o-field>
-
-                </div>
-
-            </div>
-            <!--/right-->
-
-        </div>
+            </el-col>
+        </el-row>
         <!--/large view - actions-->
 
         <!--small view - search-->
-        <o-field v-else>
-
-            <o-input placeholder="Search"
-                     v-model="store.query.filter.q"
-                     @input="store.delayedSearch"
-                     @keyup.enter.prevent="store.delayedSearch"
-                     icon="search"
-                     expanded
-                     icon-right="close-circle"
-                     icon-right-clickable
-                     @icon-right-click="store.query.filter.q = ''">
-            </o-input>
-
-        </o-field>
+        <el-row v-else>
+            <el-col>
+                <el-input
+                    class="w-50 m-2"
+                    placeholder="Type something"
+                    prefix-icon="search"
+                />
+            </el-col>
+        </el-row>
         <!--/small view - search-->
+
+        <hr style="margin: 10px 0 10px 0;"/>
+
+        <!--filters-->
+        <el-drawer
+            v-model="store.show_filters"
+            title="Filters">
+
+            <el-form label-width="80px">
+
+                <el-form-item label="Is Active" >
+                    <el-radio-group  size="small">
+                        <el-radio-button label="All" />
+                        <el-radio-button label="Only Active" />
+                        <el-radio-button label="Only Inactive" />
+                    </el-radio-group>
+                </el-form-item>
+
+                <el-form-item label="Trashed" >
+                    <el-radio-group  size="small">
+                        <el-radio-button label="Exclude" />
+                        <el-radio-button label="Include" />
+                        <el-radio-button label="Only" />
+                    </el-radio-group>
+                </el-form-item>
+
+                <el-form-item label="Short By" >
+                    <el-radio-group  size="small">
+                        <el-radio-button label="None" />
+                        <el-radio-button label="Ascending" />
+                        <el-radio-button label="Descending" />
+                    </el-radio-group>
+                </el-form-item>
+
+            </el-form>
+        </el-drawer>
+        <!--/filters-->
+
 
     </div>
 </template>

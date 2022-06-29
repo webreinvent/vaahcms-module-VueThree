@@ -1,41 +1,31 @@
-import {createApp, markRaw} from 'vue';
-import { createPinia } from 'pinia'
-import Oruga from '@oruga-ui/oruga-next'
-
-import { bulmaConfig } from '@oruga-ui/theme-bulma'
-
+import {createApp, markRaw, defineAsyncComponent} from 'vue';
+import { createPinia, PiniaVuePlugin  } from 'pinia'
+import ElementPlus from 'element-plus'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 
 import App from './layouts/App.vue'
-import routerConfig from './routes/config'
+import router from './routes/router'
+
 
 const app = createApp(App);
 
 const pinia = createPinia();
 pinia.use(({ store }) => {
-    store.$router = markRaw(routerConfig)
+    store.$router = markRaw(router)
 });
 
 
 app.use(pinia);
-app.use(routerConfig);
+app.use(PiniaVuePlugin);
+app.use(router);
 
 
-bulmaConfig.dropdown.itemActiveClass = '';
-const orugaConfig = {
-    iconPack: 'fas',
-    ...bulmaConfig
+
+app.use(ElementPlus)
+
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
 }
-
-
-
-app.use(Oruga, orugaConfig);
-
-
-
-
-
-import vaah from './vaahvue/vue-three/vaah';
-app.use(vaah);
 
 app.mount('#appVueThree')

@@ -1,41 +1,80 @@
 <script setup>
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import { useRoute } from 'vue-router';
 
-import { useMainStore } from '../../stores/main'
+import { ElNotification } from 'element-plus'
+
+import { useRootStore } from '../../stores/root'
+const rootStore = useRootStore();
+
 import { useArticlesStore } from '../../stores/articles'
+import Actions from "./components/Actions.vue";
+import Table from "./components/Table.vue";
 
-import Table from './components/Table.vue';
-import Actions from './components/Actions.vue';
 
-const mainStore = useMainStore();
 const store = useArticlesStore();
 const route = useRoute();
 
 onMounted(async () => {
-    await store.updateQueryFromUrl(route);
+    await store.watchRoutes(route);
+    await store.watchStates;
     await store.getAssets();
     await store.getList();
-    store.watchRoutes(route);
-    store.watchStates;
+
+
 });
+
 
 
 </script>
 <template>
 
-    <div class="columns" v-if="store.assets">
+
+
+    <el-row :gutter="rootStore.gutter">
+
+        <el-col :span="store.list_view_width" >
+
+            <el-card class="box-card">
+                <template #header>
+                    <div class="card-header">
+                        <b>Articles <el-tag round v-if="store.list">{{store.list.total}}</el-tag></b>
+
+                        <el-button class="button" @click="mainStore.to('/articles/form')" >Create</el-button>
+
+
+                    </div>
+                </template>
+
+                <!--actions-->
+                <Actions/>
+                <!--/actions-->
+
+                <!--table-->
+                <Table/>
+                <!--/table-->
+
+            </el-card>
+
+        </el-col>
+
+        <router-view></router-view>
+
+    </el-row>
+
+
+<!--    <div class="columns" v-if="store.assets">
 
 
 
 
-        <!--left-->
+        &lt;!&ndash;left&ndash;&gt;
         <div class="column" :class="{'is-6': store.view !== 'large'}">
 
-            <!--card-->
+            &lt;!&ndash;card&ndash;&gt;
             <div class="card" >
 
-                <!--header-->
+                &lt;!&ndash;header&ndash;&gt;
                 <header class="card-header">
 
                     <div class="card-header-title">
@@ -67,41 +106,41 @@ onMounted(async () => {
                     </div>
 
                 </header>
-                <!--/header-->
+                &lt;!&ndash;/header&ndash;&gt;
 
-                <!--content-->
+                &lt;!&ndash;content&ndash;&gt;
                 <div class="card-content">
 
                     <div class="block" >
-                        <!--actions-->
+                        &lt;!&ndash;actions&ndash;&gt;
                         <Actions/>
-                        <!--/actions-->
+                        &lt;!&ndash;/actions&ndash;&gt;
 
-                        <!--list-->
+                        &lt;!&ndash;list&ndash;&gt;
                         <div class="container">
                             <Table/>
                         </div>
-                        <!--/list-->
+                        &lt;!&ndash;/list&ndash;&gt;
 
                     </div>
                 </div>
-                <!--/content-->
+                &lt;!&ndash;/content&ndash;&gt;
 
 
 
             </div>
-            <!--/card-->
+            &lt;!&ndash;/card&ndash;&gt;
 
 
 
 
 
         </div>
-        <!--/left-->
+        &lt;!&ndash;/left&ndash;&gt;
 
 
         <router-view></router-view>
 
-    </div>
+    </div>-->
 
 </template>

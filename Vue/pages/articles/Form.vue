@@ -1,23 +1,80 @@
 <script setup>
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 
-import { useMainStore } from '../../stores/main'
+import { useRootStore } from '../../stores/root'
+const rootStore = useRootStore();
+
 import { useArticlesStore } from '../../stores/articles'
-
-const mainStore = useMainStore();
 const store = useArticlesStore();
 
 onMounted(async () => {
 
 });
 
+
+
 </script>
 <template>
-    <div class="column" v-if="store.item" >
+
+    <el-col :span="12" v-if="store.item">
+        <el-card class="box-card">
+            <template #header>
+                <div class="card-header">
+                    <span>Create</span>
+
+
+
+                    <div>
+
+
+                        <el-button-group class="ml-4">
+                            <el-button  icon="plus" >Save & New</el-button>
+                            <el-button  @click="rootStore.to('/articles')" icon="close" />
+                        </el-button-group>
+
+                        <el-dropdown placement="bottom-end"  style="margin-left: 15px">
+                            <el-button  icon="more-filled" />
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item icon="check">Save & Close</el-dropdown-item>
+                                    <el-dropdown-item icon="copy-document">Save & Clone</el-dropdown-item>
+                                    <el-dropdown-item icon="refresh">Reset</el-dropdown-item>
+                                    <el-dropdown-item icon="pointer">Fill</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+
+
+                    </div>
+
+                </div>
+            </template>
+
+            <el-form label-width="120px">
+                <el-form-item label="Name">
+                    <el-input v-model="store.item.name" />
+                </el-form-item>
+
+                <el-form-item label="Slug">
+                    <el-input v-model="store.item.slug" />
+                </el-form-item>
+
+                <el-form-item label="Is Active">
+                    <el-switch style="--el-switch-on-color: #13ce66;" v-model="store.item.is_active">
+                    </el-switch>
+                </el-form-item>
+
+            </el-form>
+
+
+        </el-card>
+    </el-col>
+
+<!--    <div class="column" v-if="store.item" >
 
         <div class="card">
 
-            <!--header-->
+            &lt;!&ndash;header&ndash;&gt;
             <header class="card-header">
 
                 <div class="card-header-title">
@@ -106,9 +163,9 @@ onMounted(async () => {
                 </div>
 
             </header>
-            <!--/header-->
+            &lt;!&ndash;/header&ndash;&gt;
 
-            <!--content-->
+            &lt;!&ndash;content&ndash;&gt;
             <div class="card-content">
 
                 <o-field label="Name" >
@@ -132,7 +189,7 @@ onMounted(async () => {
 
 
             </div>
-            <!--/content-->
+            &lt;!&ndash;/content&ndash;&gt;
 
 
 
@@ -143,5 +200,5 @@ onMounted(async () => {
 
 
 
-    </div>
+    </div>-->
 </template>

@@ -1,19 +1,14 @@
 <script setup>
-import Sidebar from '../components/Sidebar.vue';
-import {onMounted} from "vue";
+import {onMounted, reactive} from "vue";
 
-import { useMainStore } from '../stores/main'
-import {reactive} from "vue";
+import Aside from '../components/Aside.vue';
 
-const mainStore = useMainStore();
+import { useRootStore } from '../stores/root'
+const rootStore = useRootStore();
 
-const data = reactive({
-    is_loading: null,
-    main_assets: null,
-})
 
 onMounted(async () => {
-    await mainStore.getAssets();
+    await rootStore.getAssets();
 });
 
 
@@ -21,24 +16,22 @@ onMounted(async () => {
 
 
 <template>
+    <el-container>
+        <Aside/>
 
-    <div class="container-fluid">
-        <div class="columns">
+        <el-container>
 
-            <div class="column is-2">
-                <Sidebar/>
-            </div>
-
-            <div class="column">
+            <el-main style="padding-top: 0px;">
                 <RouterView />
-            </div>
+            </el-main>
+
+        </el-container>
 
 
-        </div>
+
+    </el-container>
 
 
-
-    </div>
 
 
 </template>

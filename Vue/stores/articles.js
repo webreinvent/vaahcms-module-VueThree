@@ -2,6 +2,7 @@ import {watch} from 'vue'
 import {defineStore, acceptHMRUpdate} from 'pinia'
 import qs from 'qs'
 import {vaah} from '../vaahvue/pinia/vaah'
+import {ElNotification} from "element-plus";
 
 let base_url = document.getElementsByTagName('base')[0].getAttribute("href");
 let ajax_url = base_url + "/backend/vuethree/articles";
@@ -38,64 +39,86 @@ export const useArticlesStore = defineStore({
             delay_time: 600, // time delay in milliseconds
             delay_timer: 0 // time delay in milliseconds
         },
+        route: null,
         empty: {
             query: null,
             action: null,
         },
         view: 'large',
+        show_filters: false,
+        list_view_width: 24,
         form: {
             type: 'Create',
             action: null,
             is_button_loading: null
         },
-        show_filters: null,
         is_list_loading: null,
         count_filters: 0,
     }),
     getters: {
-        updateState(state, payload)
+
+
+
+
+    },
+    actions: {
+        watchStates(state)
         {
-            state[payload.key] = payload.value
-        },
-        getState(state)
-        {
-            return state
-        },
-        watchStates()
-        {
-            watch(this.query.filter, (newVal,oldVal) =>
+            watch(this.query.filter, async (newVal,oldVal) =>
                 {
                     console.log('--->', newVal);
 
                     this.query.filter = newVal;
 
-                    this.delayedSearch();
-                },
-             { deep: true }
-            )
-        },
-
-
-    },
-    actions: {
-        watchRoutes(route)
-        {
-            watch(route, (newVal,oldVal) =>
-                {
-                    switch(route.name)
-                    {
-                        case 'articles.form':
-                            this.view = 'small';
-                        break;
-                        default:
-                            this.view = 'large';
-                        break
-                    }
-
+                    await this.delayedSearch();
                 },
                 { deep: true }
             )
 
+            watch(state.view, (newVal,oldVal) =>
+                {
+                    if(newVal === 'large')
+                    {
+                        this.list_view_width = 24;
+                    } else{
+
+                    }
+                    this.list_view_width = 12;
+                },
+                { deep: true }
+            )
+        },
+        watchRoutes(route)
+        {
+            //set initial value
+            this.route = route;
+            this.setViewAndWidth(route.name);
+            this.updateQueryFromUrl(route)
+
+            //watch routes
+            watch(route, (newVal,oldVal) =>
+                {
+                    this.route = newVal;
+                    this.setViewAndWidth(newVal.name);
+                    this.updateQueryFromUrl(newVal)
+
+                }, { deep: true }
+            )
+
+        },
+        setViewAndWidth(route_name)
+        {
+            switch(route_name)
+            {
+                case 'articles.form':
+                    this.view = 'small';
+                    this.list_view_width = 12;
+                    break;
+                default:
+                    this.view = 'large';
+                    this.list_view_width = 24;
+                    break
+            }
         },
         async getAssets() {
             vaah().ajax(
@@ -161,17 +184,24 @@ export const useArticlesStore = defineStore({
         async paginate() {
 
         },
+        onItemSelection(items)
+        {
+            this.action.items = items;
+        },
         async updateList(type){
 
             if(!type)
             {
-                vaah().toastErrors(['Select an action type']);
+
+
+
+                //vaah().toastErrors(['Select an action type']);
                 return false;
             }
             this.action.type = type;
             if(this.action.items.length < 1)
             {
-                vaah().toastErrors(['Select a record']);
+                vaah().toastErrors(['Select records']);
                 return false;
             }
 
@@ -332,7 +362,7 @@ export const useArticlesStore = defineStore({
             {
                 let chrs = this.list.total.toString();
                 chrs = chrs.length;
-                width = chrs*20;
+                width = chrs*40;
             }
 
             return width;
@@ -340,7 +370,13 @@ export const useArticlesStore = defineStore({
     }
 })
 
+
+
+
 // Pinia hot reload
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useArticlesStore, import.meta.hot))
 }
+
+
+
