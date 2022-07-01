@@ -123,7 +123,8 @@ export const useArticlesStore = defineStore({
         async getAssets() {
             vaah().ajax(
                 this.ajax_url+'/assets',
-                this.afterGetAssets
+                this.afterGetAssets,
+
             );
         },
         afterGetAssets(data, res)
@@ -135,10 +136,13 @@ export const useArticlesStore = defineStore({
             }
         },
         async getList() {
+            let options = {
+                query: this.query
+            }
             await vaah().ajax(
                 this.ajax_url,
                 this.afterGetList,
-                this.query
+                options
             );
         },
         afterGetList: function (data, res)
@@ -192,10 +196,7 @@ export const useArticlesStore = defineStore({
 
             if(!type)
             {
-
-
-
-                //vaah().toastErrors(['Select an action type']);
+                vaah().toastErrors(['Select an action type']);
                 return false;
             }
             this.action.type = type;
@@ -205,9 +206,12 @@ export const useArticlesStore = defineStore({
                 return false;
             }
 
-            let params = this.action;
-            let url = this.ajax_url;
-            vaah().ajax(url, this.updateListAfter, params, 'put');
+            let options = {
+                params: this.action,
+                method: 'put',
+                show_success: false
+            };
+            vaah().ajax(this.ajax_url, this.updateListAfter, options);
         },
         async updateListAfter(data, res) {
             if(data)

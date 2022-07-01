@@ -23,7 +23,7 @@ const store = useArticlesStore();
                                v-if="scope.row.is_active" plain>
                         Yes
                     </el-button>
-                    <el-button type="info" size="small" v-else plain>
+                    <el-button type="danger" size="small" v-else plain>
                         No
                     </el-button>
                 </template>

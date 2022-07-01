@@ -13,14 +13,40 @@ export const vaah = defineStore({
         ajax: async function (
             url,
             callback = null,
-            params = null,
-            method = 'get',
-            query = null,
-            headers = null
+            options= {
+                params: null,
+                method: 'get',
+                query: null,
+                headers: null,
+                show_success: true,
+            }
         ) {
 
 
             let self = this;
+            let default_option = {
+                params: null,
+                method: 'get',
+                query: null,
+                headers: null,
+                show_success: true,
+            }
+
+            if(options)
+            {
+                for(let key in options)
+                {
+                    default_option[key] = options[key];
+                }
+            }
+
+            let params = default_option.params;
+            let method = default_option.method;
+            let query = default_option.query;
+            let headers = default_option.headers;
+            let show_success = default_option.show_success;
+
+
 
             //To make axios request as ajax request
             axios.defaults.headers.common = {
@@ -64,10 +90,13 @@ export const vaah = defineStore({
                 };
             }
 
+            console.log('options--->', options);
+            console.log('--->', method);
+
 
             let ajax = await axios[method](url, params, q)
                 .then(function (response) {
-                    self.processResponse(response);
+                    self.processResponse(response, show_success);
                     if(callback)
                     {
                         if(response.data && response.data.data)
@@ -91,7 +120,7 @@ export const vaah = defineStore({
         },
 
         //----------------------------------------------------------
-        processResponse: function(response)
+        processResponse: function(response, show_success)
         {
             if(
                 (response.data.failed || response.data.success === false)
@@ -105,6 +134,7 @@ export const vaah = defineStore({
                 response.data.success
                 && response.data.success === true
                 && response.data.messages
+                && show_success === true
             )
             {
                 this.toastSuccess(response.data.messages);

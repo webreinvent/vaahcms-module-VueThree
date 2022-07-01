@@ -2,17 +2,15 @@
 
 </script>
 <template  >
-    <div>
-        <h1  class="title">
-            Dashboard
-        </h1>
 
-        <section>
-            <o-button variant="primary" >Click Me</o-button>
-            <o-button variant="warning" >Click Me</o-button>
-        </section>
+    <el-row>
+        <el-col>
+            <h1 style="font-size: var(--el-font-size-large);">Dashboard</h1>
 
-    </div>
+            <el-button class="border-0 bg-red-500 text-white">Button</el-button>
+
+        </el-col>
+    </el-row>
 </template>
 
 

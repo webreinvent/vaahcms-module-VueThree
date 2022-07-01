@@ -43,6 +43,12 @@ const store = useArticlesStore();
                         </template>
                     </el-dropdown>
 
+                    <el-popconfirm v-if="store.action.items.length>0" title="Are you sure to delete this?">
+                        <template #reference>
+                            <el-button  icon="delete"></el-button>
+                        </template>
+                    </el-popconfirm>
+
                     <el-dropdown placement="bottom-start">
                         <el-button icon="more-filled" >
 
