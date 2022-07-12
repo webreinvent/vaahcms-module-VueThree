@@ -1,7 +1,7 @@
 @extends("vaahcms::backend.vaahone.layouts.backend")
 
 @section('vaahcms_extend_backend_css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" integrity="sha512-wnea99uKIC3TJF7v4eKk4Y+lMz2Mklv18+r4na2Gn1abDRPPOeef95xTzdwGD9e6zXJBteMIhZ1+68QC5byJZw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/element-plus/2.2.9/index.min.css" integrity="sha512-0Q0RMb9iiDwl5bCBsQXKs9SxRbsGtPoNyFJdjeRQ+Io2OVEw/MDTG8KeDrGu8q1e0mK3phISQ3yk5h3VWaBoHA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 @endsection
 
 
