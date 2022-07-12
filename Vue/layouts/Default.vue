@@ -16,20 +16,12 @@ onMounted(async () => {
 
 
 <template>
-    <el-container>
-        <Aside/>
 
-        <el-container>
+    <div class="grid">
+        <div class="col-3"><Aside/></div>
+        <div class="col"><RouterView /></div>
+    </div>
 
-            <el-main style="padding-top: 0px;">
-                <RouterView />
-            </el-main>
-
-        </el-container>
-
-
-
-    </el-container>
 
 
 

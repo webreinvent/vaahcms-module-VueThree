@@ -2,7 +2,7 @@
 import {onMounted, ref} from "vue";
 import { useRoute } from 'vue-router';
 
-import { ElNotification } from 'element-plus'
+
 
 import { useRootStore } from '../../stores/root'
 const rootStore = useRootStore();
@@ -31,7 +31,7 @@ onMounted(async () => {
 
 
 
-    <el-row :gutter="rootStore.gutter">
+<!--    <el-row :gutter="rootStore.gutter">
 
         <el-col :span="store.list_view_width" >
 
@@ -46,13 +46,13 @@ onMounted(async () => {
                     </div>
                 </template>
 
-                <!--actions-->
+                &lt;!&ndash;actions&ndash;&gt;
                 <Actions/>
-                <!--/actions-->
+                &lt;!&ndash;/actions&ndash;&gt;
 
-                <!--table-->
+                &lt;!&ndash;table&ndash;&gt;
                 <Table/>
-                <!--/table-->
+                &lt;!&ndash;/table&ndash;&gt;
 
             </el-card>
 
@@ -60,87 +60,8 @@ onMounted(async () => {
 
         <router-view></router-view>
 
-    </el-row>
+    </el-row>-->
 
 
-<!--    <div class="columns" v-if="store.assets">
-
-
-
-
-        &lt;!&ndash;left&ndash;&gt;
-        <div class="column" :class="{'is-6': store.view !== 'large'}">
-
-            &lt;!&ndash;card&ndash;&gt;
-            <div class="card" >
-
-                &lt;!&ndash;header&ndash;&gt;
-                <header class="card-header">
-
-                    <div class="card-header-title">
-                        Articles
-                        <span v-if="store.list"
-                              class="tag has-margin-left-5">
-                            {{store.list.total}}
-                        </span>
-                    </div>
-
-
-                    <div class="card-header-buttons">
-                        <div class="field has-addons is-pulled-right">
-                            <p   class="control">
-                                <o-button tag="router-link"
-                                          :to="{name: 'articles.form'}"
-                                          icon-left="plus">
-                                    Create
-                                </o-button>
-                            </p>
-
-                            <p class="control">
-                                <o-button @click="store.reload()"
-                                          :loading="true"
-                                          icon-left="redo-alt">
-                                </o-button>
-                            </p>
-                        </div>
-                    </div>
-
-                </header>
-                &lt;!&ndash;/header&ndash;&gt;
-
-                &lt;!&ndash;content&ndash;&gt;
-                <div class="card-content">
-
-                    <div class="block" >
-                        &lt;!&ndash;actions&ndash;&gt;
-                        <Actions/>
-                        &lt;!&ndash;/actions&ndash;&gt;
-
-                        &lt;!&ndash;list&ndash;&gt;
-                        <div class="container">
-                            <Table/>
-                        </div>
-                        &lt;!&ndash;/list&ndash;&gt;
-
-                    </div>
-                </div>
-                &lt;!&ndash;/content&ndash;&gt;
-
-
-
-            </div>
-            &lt;!&ndash;/card&ndash;&gt;
-
-
-
-
-
-        </div>
-        &lt;!&ndash;/left&ndash;&gt;
-
-
-        <router-view></router-view>
-
-    </div>-->
 
 </template>

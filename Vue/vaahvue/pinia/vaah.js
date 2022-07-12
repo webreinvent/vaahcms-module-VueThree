@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia'
 import axios from 'axios'
 import qs from "qs";
-import {ElNotification} from "element-plus";
+
 
 
 export const vaah = defineStore({
@@ -200,7 +200,7 @@ export const vaah = defineStore({
             let data = this.getMessageAndDuration(messages);
             if(data && data.html !== "")
             {
-                ElNotification({
+                /*ElNotification({
                     type: 'success',
                     icon: 'warning',
                     customClass: 'notification-success',
@@ -208,7 +208,7 @@ export const vaah = defineStore({
                     message: data.html,
                     duration: data.duration,
                     appendTo: '#element-plus-notifications'
-                });
+                });*/
             }
         },
         //----------------------------------------------------------
@@ -216,7 +216,7 @@ export const vaah = defineStore({
             let data = this.getMessageAndDuration(messages);
             if(data && data.html !== "")
             {
-                ElNotification({
+                /*ElNotification({
                     type: 'error',
                     icon: 'warning',
                     customClass: 'notification-error',
@@ -225,7 +225,7 @@ export const vaah = defineStore({
                     message: data.html,
                     duration: data.duration,
                     appendTo: '#element-plus-notifications'
-                })
+                })*/
             }
         },
         //----------------------------------------------------------

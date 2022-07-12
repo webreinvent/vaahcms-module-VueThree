@@ -1,8 +1,5 @@
 import path from 'path'
 import {fileURLToPath, URL} from 'url'
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -13,12 +10,6 @@ const pathSrc = path.resolve(__dirname, 'Vue')
 export default defineConfig({
     plugins: [
         vue(),
-        AutoImport({
-            resolvers: [ElementPlusResolver()],
-        }),
-        Components({
-            resolvers: [ElementPlusResolver()],
-        }),
     ],
     resolve: {
         alias: {
@@ -34,7 +25,8 @@ export default defineConfig({
                 entryFileNames: `[name].js`,
                 chunkFileNames: `[name].js`,
                 //assetFileNames: `[name].[ext]`
-            }
+            },
+            external: ['vue', /primevue\/.+/],
         }
     },
     server: {

@@ -1,7 +1,9 @@
 import {createApp, markRaw, defineAsyncComponent} from 'vue';
 import { createPinia, PiniaVuePlugin  } from 'pinia'
-import ElementPlus from 'element-plus'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
+import PrimeVue from 'primevue/config';
+import 'primevue/resources/themes/saga-blue/theme.css';
+import 'primevue/resources/primevue.min.css';
 
 
 import App from './layouts/App.vue'
@@ -21,11 +23,6 @@ app.use(PiniaVuePlugin);
 app.use(router);
 
 
-
-app.use(ElementPlus)
-
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-    app.component(key, component)
-}
+app.use(PrimeVue);
 
 app.mount('#appVueThree')

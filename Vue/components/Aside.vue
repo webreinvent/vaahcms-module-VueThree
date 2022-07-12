@@ -1,28 +1,38 @@
 <script setup>
 import {reactive, ref} from 'vue';
 
+import Menu from 'primevue/menu';
+
 const inputs = {
 }
 const data = reactive(inputs);
 const height = ref(window.innerHeight)
 
+const menu = ref();
+
+const items = ref([
+    {
+        label: 'VueThree',
+        items: [
+            {
+            label: 'Dashboard',
+            icon: 'fa-solid fa-plus',
+            to: "/"
+            },
+            {
+                label: 'Articles',
+                icon: 'fa-solid fa-blog',
+                to: "/articles"
+            },
+        ]
+    },
+]);
+
 </script>
-<template  >
+<template>
 
     <div v-if="height">
-        <el-container :style="{'height': height+'px'}" >
-            <el-aside width="200px">
-                <el-scrollbar>
-                    <el-menu :router="true">
-                        <el-menu-item index="/" >
-                            Dashboard
-                        </el-menu-item>
-                        <el-menu-item index="/articles" >Articles</el-menu-item>
-                    </el-menu>
-                </el-scrollbar>
-
-            </el-aside>
-        </el-container>
+        <Menu :model="items" />
     </div>
 
 </template>

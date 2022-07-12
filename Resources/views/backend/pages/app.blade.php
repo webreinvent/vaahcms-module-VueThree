@@ -1,7 +1,8 @@
 @extends("vaahcms::backend.vaahone.layouts.backend")
 
 @section('vaahcms_extend_backend_css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" integrity="sha512-wnea99uKIC3TJF7v4eKk4Y+lMz2Mklv18+r4na2Gn1abDRPPOeef95xTzdwGD9e6zXJBteMIhZ1+68QC5byJZw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/primeflex@3.1.2/primeflex.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 @endsection
 
 
@@ -17,16 +18,11 @@
 
 @section('content')
 
-    <div class="element-plus">
+    <div class="prime">
         <div id="appVueThree">
 
 
         </div>
-
-        <div id="element-plus-notifications">
-
-        </div>
-
     </div>
 
 @endsection
