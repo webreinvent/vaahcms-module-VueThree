@@ -26,9 +26,6 @@ onMounted(async () => {
 
 
 const menu = ref();
-const collapsed = ref(true);
-
-
 const items = ref([
     {
         label: 'Options',
@@ -36,12 +33,14 @@ const items = ref([
             label: 'Update',
             icon: 'pi pi-refresh',
             command: () => {
+                toast.add({severity:'success', summary:'Updated', detail:'Data Updated', life: 3000});
             }
         },
             {
                 label: 'Delete',
                 icon: 'pi pi-times',
                 command: () => {
+                    toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000});
                 }
             }
         ]},
@@ -62,12 +61,9 @@ const items = ref([
         ]}
 ]);
 
-
 const toggle = (event) => {
     menu.value.toggle(event);
 };
-
-
 
 const productService = reactive(
     [
@@ -86,21 +82,6 @@ const productService = reactive(
 
 
 const selectedProducts3 = ref();
-
-
-const cities = ref([
-    {name: 'New York', code: 'NY'},
-    {name: 'Rome', code: 'RM'},
-    {name: 'London', code: 'LDN'},
-    {name: 'Istanbul', code: 'IST'},
-    {name: 'Paris', code: 'PRS'}
-]);
-
-
-const selectedCity = ref();
-
-
-
 
 </script>
 <template>
@@ -135,12 +116,25 @@ const selectedCity = ref();
                 <!--left-->
                 <div>
 
+                    <Button
+                        type="button"
+                        @click="toggle"
+                        icon="pi pi-angle-down"
+                        aria-haspopup="true"
+                        aria-controls="overlay_menu"
+                    />
 
-                    <h5>Overlay</h5>
-                    <Button type="button" label="Toggle" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu"/>
+                    <Button
+                        type="button"
+                        @click="toggle"
+                        icon="pi pi-ellipsis-h"
+                        aria-haspopup="true"
+                        aria-controls="overlay_menu"
+                        class="ml-1"
+                    />
                     <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
 
-                    <SplitButton  :model="items" ></SplitButton>
+
 
 
                 </div>
@@ -149,9 +143,13 @@ const selectedCity = ref();
                 <!--right-->
                 <div class="">
 
-                    <Dropdown v-model="selectedCity" :options="cities"
-                              style="width: 80px"
-                              optionLabel="name"
+                    <Button
+                        type="button"
+                        @click="toggle"
+                        icon="pi pi-ellipsis-h"
+                        aria-haspopup="true"
+                        aria-controls="overlay_menu"
+                        class="ml-1"
                     />
 
                 </div>
@@ -168,6 +166,7 @@ const selectedCity = ref();
             <br/>
             <br/>
 
+
             <DataTable :value="productService"
                        class="p-datatable-sm"
                        v-model:selection="selectedProducts3"
@@ -182,7 +181,7 @@ const selectedCity = ref();
             </DataTable>
 
 
-            <Paginator :rows="10" :totalRecords="1000"></Paginator>
+
         </div>
     </Panel>
 
