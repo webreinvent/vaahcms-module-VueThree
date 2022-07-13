@@ -22,6 +22,8 @@ let empty_action = {
     items: [],
 };
 
+
+
 export const useArticlesStore = defineStore({
     id: 'articles',
     state: () => ({
@@ -40,13 +42,9 @@ export const useArticlesStore = defineStore({
             delay_timer: 0 // time delay in milliseconds
         },
         route: null,
-        empty: {
-            query: null,
-            action: null,
-        },
         view: 'large',
         show_filters: false,
-        list_view_width: 24,
+        list_view_width: 12,
         form: {
             type: 'Create',
             action: null,
@@ -56,9 +54,6 @@ export const useArticlesStore = defineStore({
         count_filters: 0,
     }),
     getters: {
-
-
-
 
     },
     actions: {
@@ -79,11 +74,11 @@ export const useArticlesStore = defineStore({
                 {
                     if(newVal === 'large')
                     {
-                        this.list_view_width = 24;
+                        this.list_view_width = 12;
                     } else{
 
                     }
-                    this.list_view_width = 12;
+                    this.list_view_width = 6;
                 },
                 { deep: true }
             )
@@ -112,11 +107,11 @@ export const useArticlesStore = defineStore({
             {
                 case 'articles.form':
                     this.view = 'small';
-                    this.list_view_width = 12;
+                    this.list_view_width = 6;
                     break;
                 default:
                     this.view = 'large';
-                    this.list_view_width = 24;
+                    this.list_view_width = 12;
                     break
             }
         },
@@ -124,7 +119,6 @@ export const useArticlesStore = defineStore({
             vaah().ajax(
                 this.ajax_url+'/assets',
                 this.afterGetAssets,
-
             );
         },
         afterGetAssets(data, res)
@@ -137,8 +131,11 @@ export const useArticlesStore = defineStore({
         },
         async getList() {
             let options = {
-                query: this.query
+                query: vaah().clone(this.query)
             }
+
+            console.log('options--->', options);
+
             await vaah().ajax(
                 this.ajax_url,
                 this.afterGetList,
@@ -170,11 +167,16 @@ export const useArticlesStore = defineStore({
             }
         },
         async create() {
+
+            let options = {
+                params: this.item,
+                method: 'post',
+            };
+
             vaah().ajax(
                 ajax_url,
                 this.afterCreate,
-                this.item,
-                'post'
+                options
             );
         },
         afterCreate(data, res)
@@ -211,7 +213,11 @@ export const useArticlesStore = defineStore({
                 method: 'put',
                 show_success: false
             };
-            vaah().ajax(this.ajax_url, this.updateListAfter, options);
+            vaah().ajax(
+                this.ajax_url,
+                this.updateListAfter,
+                options
+            );
         },
         async updateListAfter(data, res) {
             if(data)
@@ -368,6 +374,7 @@ export const useArticlesStore = defineStore({
         getIdWidth()
         {
             let width = 50;
+
             if(this.list && this.list.total)
             {
                 let chrs = this.list.total.toString();
@@ -375,7 +382,7 @@ export const useArticlesStore = defineStore({
                 width = chrs*40;
             }
 
-            return width;
+            return width+'px';
         },
     }
 })

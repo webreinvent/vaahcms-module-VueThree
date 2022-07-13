@@ -62,10 +62,10 @@ export const vaah = defineStore({
             }
 
             if (method === 'get') {
-                let query = {
-                    params: params
+                params = {
+                    params: query,
                 };
-                params = query;
+
                 q = {};
                 axios.interceptors.request.use(
                     function (config) {
@@ -90,8 +90,8 @@ export const vaah = defineStore({
                 };
             }
 
-            console.log('options--->', options);
-            console.log('--->', method);
+            console.log('ajax method--->', method);
+            console.log('ajax params--->', params);
 
 
             let ajax = await axios[method](url, params, q)

@@ -5,6 +5,7 @@ import List from '../pages/articles/List.vue'
 import Form from '../pages/articles/Form.vue'
 
 routes_list = {
+
     path: '/articles',
     name: 'articles.index',
     component: List,

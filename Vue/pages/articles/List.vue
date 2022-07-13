@@ -20,68 +20,8 @@ onMounted(async () => {
     await store.watchStates;
     await store.getAssets();
     await store.getList();
-
-
 });
 
-
-const menu = ref();
-const items = ref([
-    {
-        label: 'Options',
-        items: [{
-            label: 'Update',
-            icon: 'pi pi-refresh',
-            command: () => {
-                toast.add({severity:'success', summary:'Updated', detail:'Data Updated', life: 3000});
-            }
-        },
-            {
-                label: 'Delete',
-                icon: 'pi pi-times',
-                command: () => {
-                    toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000});
-                }
-            }
-        ]},
-    {
-        label: 'Navigate',
-        items: [{
-            label: 'Vue Website',
-            icon: 'pi pi-external-link',
-            url: 'https://vuejs.org/'
-        },
-            {
-                label: 'Router',
-                icon: 'pi pi-upload',
-                command: () => {
-                    window.location.hash = "/fileupload"
-                }
-            }
-        ]}
-]);
-
-const toggle = (event) => {
-    menu.value.toggle(event);
-};
-
-const productService = reactive(
-    [
-        {"id": "1000","code": "f230fh0g3","name": "Bamboo Watch","description": "Product Description","image": "bamboo-watch.jpg","price": 65,"category": "Accessories","quantity": 24,"inventoryStatus": "INSTOCK","rating": 5},
-        {"id": "1001","code": "nvklal433","name": "Black Watch","description": "Product Description","image": "black-watch.jpg","price": 72,"category": "Accessories","quantity": 61,"inventoryStatus": "INSTOCK","rating": 4},
-        {"id": "1002","code": "zz21cz3c1","name": "Blue Band","description": "Product Description","image": "blue-band.jpg","price": 79,"category": "Fitness","quantity": 2,"inventoryStatus": "LOWSTOCK","rating": 3},
-        {"id": "1003","code": "244wgerg2","name": "Blue T-Shirt","description": "Product Description","image": "blue-t-shirt.jpg","price": 29,"category": "Clothing","quantity": 25,"inventoryStatus": "INSTOCK","rating": 5},
-        {"id": "1004","code": "h456wer53","name": "Bracelet","description": "Product Description","image": "bracelet.jpg","price": 15,"category": "Accessories","quantity": 73,"inventoryStatus": "INSTOCK","rating": 4},
-        {"id": "1005","code": "av2231fwg","name": "Brown Purse","description": "Product Description","image": "brown-purse.jpg","price": 120,"category": "Accessories","quantity": 0,"inventoryStatus": "OUTOFSTOCK","rating": 4},
-        {"id": "1006","code": "bib36pfvm","name": "Chakra Bracelet","description": "Product Description","image": "chakra-bracelet.jpg","price": 32,"category": "Accessories","quantity": 5,"inventoryStatus": "LOWSTOCK","rating": 3},
-        {"id": "1007","code": "mbvjkgip5","name": "Galaxy Earrings","description": "Product Description","image": "galaxy-earrings.jpg","price": 34,"category": "Accessories","quantity": 23,"inventoryStatus": "INSTOCK","rating": 5},
-        {"id": "1008","code": "vbb124btr","name": "Game Controller","description": "Product Description","image": "game-controller.jpg","price": 99,"category": "Electronics","quantity": 2,"inventoryStatus": "LOWSTOCK","rating": 4},
-        {"id": "1009","code": "cm230f032","name": "Gaming Set","description": "Product Description","image": "gaming-set.jpg","price": 299,"category": "Electronics","quantity": 63,"inventoryStatus": "INSTOCK","rating": 3}
-    ]
-);
-
-
-const selectedProducts3 = ref();
 
 </script>
 <template>
@@ -89,7 +29,7 @@ const selectedProducts3 = ref();
     <div class="grid">
 
 
-        <div class="col-6">
+        <div :class="'col-'+store.list_view_width"  >
             <Panel >
 
         <template class="p-1" #header>
@@ -97,7 +37,9 @@ const selectedProducts3 = ref();
 
             <div class="flex flex-row">
                 <div class="p-panel-title">
-                    Articles (2)
+                    Articles
+
+                    <Badge v-if="store.list" :value="store.list.total" ></Badge>
                 </div>
 
             </div>
@@ -114,78 +56,74 @@ const selectedProducts3 = ref();
 
         <div>
 
-            <div class="flex justify-content-between">
+            <Actions></Actions>
+
+            <br/>
+
+            <div v-if="store.list">
+
+                <DataTable :value="store.list.data"
+                       class="p-datatable-sm"
+                       v-model:selection="store.action.items"
+                       stripedRows
+                       responsiveLayout="scroll">
+
+                    <Column selectionMode="multiple"
+                            v-if="store.isViewLarge()"
+                            headerStyle="width: 3em">
+                    </Column>
+
+                    <Column field="id" header="ID" :style="{width: store.getIdWidth()}" :sortable="true">
+                    </Column>
+
+                    <Column field="name" header="Name"
+                            :sortable="true">
+                    </Column>
+
+                    <Column field="is_active" v-if="store.isViewLarge()"
+                            :sortable="true"
+                            style="width:100px;"
+                            header="Is Active">
+
+                        <template #body="prop">
+
+                            <InputSwitch v-model.bool="prop.data.is_active"
+                                         class="p-inputswitch-sm"
+                                         v-bind:false-value="0"  v-bind:true-value="1" />
+                        </template>
+
+                    </Column>
+
+                    <Column field="actions" style="width:150px;"
+                            v-if="store.isViewLarge()"
+                            header="Actions">
+
+                        <template #body="prop">
+
+                            <div class="p-inputgroup ">
+
+                                <Button class="p-button-tiny p-button-text"
+                                        icon="pi pi-eye"/>
+
+                                <Button class="p-button-tiny p-button-text"
+                                        icon="pi pi-pencil"/>
+
+                                <Button class="p-button-tiny p-button-danger p-button-text"
+                                        icon="pi pi-trash"/>
+
+                            </div>
+
+                        </template>
 
 
-                <!--left-->
-                <div>
-
-                    <Button
-                        type="button"
-
-                        @click="toggle"
-                        aria-haspopup="true"
-                        aria-controls="overlay_menu">
-                        <i class="pi pi-angle-down"></i>
-                        <Badge value="2"></Badge>
-                    </Button>
-
-                    <Button
-                        type="button"
-                        @click="toggle"
-                        aria-haspopup="true"
-                        aria-controls="overlay_menu"
-                        class="ml-1"
-                    >
-                        <i class="pi pi-ellipsis-h"></i>
-                    </Button>
-                    <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
+                    </Column>
 
 
-
-
-                </div>
-                <!--/left-->
-
-                <!--right-->
-                <div class="">
-
-
-
-                    <Button
-                        type="button"
-                        class="p-button-sm"
-                        @click="toggle"
-                        aria-haspopup="true"
-                        aria-controls="overlay_menu">
-                        Filters
-                        <Badge value="2"></Badge>
-                    </Button>
-
-                </div>
-                <!--/right-->
+                </DataTable>
 
 
 
             </div>
-
-
-            <br/>
-
-
-            <DataTable :value="productService"
-                       class="p-datatable-sm"
-                       v-model:selection="selectedProducts3"
-                       stripedRows
-                       responsiveLayout="scroll">
-
-                <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-
-                <Column field="code" header="Code" :sortable="true"></Column>
-                <Column field="name" header="Name"></Column>
-                <Column field="category" header="Category"></Column>
-                <Column field="quantity" header="Quantity"></Column>
-            </DataTable>
 
 
 
