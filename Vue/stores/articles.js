@@ -332,6 +332,12 @@ export const useArticlesStore = defineStore({
 
 
         },
+        toForm()
+        {
+            this.$router.push({name: 'articles.form'})
+
+
+        },
         setRegisteredBy()
         {
 

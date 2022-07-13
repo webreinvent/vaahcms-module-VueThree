@@ -1,7 +1,6 @@
 let routes= [];
 let routes_list= [];
 
-import Default from '../layouts/Default.vue';
 import Dashboard from '../pages/dashboard/Dashboard.vue'
 
 routes_list = {

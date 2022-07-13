@@ -1,10 +1,8 @@
-import {createApp, markRaw, defineAsyncComponent} from 'vue';
+import {createApp, markRaw} from 'vue';
 import { createPinia, PiniaVuePlugin  } from 'pinia'
 
 
 //-------------PrimeVue Imports
-import "primevue/resources/themes/lara-light-blue/theme.css";
-import "primevue/resources/primevue.min.css";
 
 import PrimeVue from "primevue/config";
 import AutoComplete from 'primevue/autocomplete';
@@ -120,7 +118,6 @@ app.use(pinia);
 app.use(PiniaVuePlugin);
 app.use(router);
 //-------------/APP
-
 
 
 //-------------PrimeVue Use

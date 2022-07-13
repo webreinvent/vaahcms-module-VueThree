@@ -86,7 +86,11 @@ const selectedProducts3 = ref();
 </script>
 <template>
 
-    <Panel >
+    <div class="grid">
+
+
+        <div class="col-6">
+            <Panel >
 
         <template class="p-1" #header>
 
@@ -103,7 +107,7 @@ const selectedProducts3 = ref();
 
         <template #icons>
 
-            <Button >Create</Button>
+            <Button class="p-button-primary" @click="store.toForm()"  >Create</Button>
 
         </template>
 
@@ -118,20 +122,23 @@ const selectedProducts3 = ref();
 
                     <Button
                         type="button"
+
                         @click="toggle"
-                        icon="pi pi-angle-down"
                         aria-haspopup="true"
-                        aria-controls="overlay_menu"
-                    />
+                        aria-controls="overlay_menu">
+                        <i class="pi pi-angle-down"></i>
+                        <Badge value="2"></Badge>
+                    </Button>
 
                     <Button
                         type="button"
                         @click="toggle"
-                        icon="pi pi-ellipsis-h"
                         aria-haspopup="true"
                         aria-controls="overlay_menu"
                         class="ml-1"
-                    />
+                    >
+                        <i class="pi pi-ellipsis-h"></i>
+                    </Button>
                     <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
 
 
@@ -143,14 +150,17 @@ const selectedProducts3 = ref();
                 <!--right-->
                 <div class="">
 
+
+
                     <Button
                         type="button"
+                        class="p-button-sm"
                         @click="toggle"
-                        icon="pi pi-ellipsis-h"
                         aria-haspopup="true"
-                        aria-controls="overlay_menu"
-                        class="ml-1"
-                    />
+                        aria-controls="overlay_menu">
+                        Filters
+                        <Badge value="2"></Badge>
+                    </Button>
 
                 </div>
                 <!--/right-->
@@ -160,10 +170,6 @@ const selectedProducts3 = ref();
             </div>
 
 
-
-
-
-            <br/>
             <br/>
 
 
@@ -172,6 +178,7 @@ const selectedProducts3 = ref();
                        v-model:selection="selectedProducts3"
                        stripedRows
                        responsiveLayout="scroll">
+
                 <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
 
                 <Column field="code" header="Code" :sortable="true"></Column>
@@ -184,8 +191,11 @@ const selectedProducts3 = ref();
 
         </div>
     </Panel>
+        </div>
 
+        <RouterView/>
 
+    </div>
 
 
 

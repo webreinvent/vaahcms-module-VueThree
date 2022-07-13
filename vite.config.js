@@ -18,15 +18,16 @@ export default defineConfig({
     },
 
     build: {
+        chunkSizeWarningLimit: 1600,
         target: "esnext",
         outDir: 'Resources/assets/build/',
         rollupOptions: {
             output: {
                 entryFileNames: `[name].js`,
                 chunkFileNames: `[name].js`,
-                //assetFileNames: `[name].[ext]`
+                assetFileNames: `[name].[ext]`
             },
-            external: ['vue', /primevue\/.+/],
+            //external: ['vue', /primevue\/.+/],
         }
     },
     server: {
