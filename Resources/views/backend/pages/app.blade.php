@@ -50,6 +50,24 @@
             border-color: var(--blue-600) !important;
         }
 
+        .p-container-toasts .p-toast-summary{
+            display: none !important;
+        }
+
+        .p-container-toasts .p-toast-detail{
+            margin: 0.2rem 0 0 0 !important;
+        }
+
+
+        .p-container-toasts .p-toast-message-content
+        {
+            padding: 0.7rem !important;
+        }
+
+        .p-container-toasts .p-toast-message-icon
+        {
+            display: none !important;
+        }
     </style>
     <!--/primevue-->
 

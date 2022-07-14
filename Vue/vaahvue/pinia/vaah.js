@@ -1,20 +1,7 @@
-import { defineComponent } from "vue";
-import {defineStore} from 'pinia'
-import app from '@/main';
-
+import {defineStore, acceptHMRUpdate} from 'pinia'
+import { app } from '@/main';
 import axios from 'axios'
 import qs from "qs";
-
-import {ToastSeverity} from 'primevue/api';
-
-
-
-
-export default defineComponent({
-    setup() {
-        const toast = useToast();
-    }
-})
 
 
 export const vaah = defineStore({
@@ -34,7 +21,6 @@ export const vaah = defineStore({
                 show_success: true,
             }
         ) {
-
 
             let self = this;
             let default_option = {
@@ -213,38 +199,26 @@ export const vaah = defineStore({
             let data = this.getMessageAndDuration(messages);
             if(data && data.html !== "")
             {
-                /*ElNotification({
-                    type: 'success',
-                    icon: 'warning',
-                    customClass: 'notification-success',
-                    position: 'top-right',
-                    message: data.html,
-                    duration: data.duration,
-                    appendTo: '#element-plus-notifications'
-                });*/
+
+                app.config.globalProperties.$toast.add({
+                    severity: 'success',
+                    detail: data.html,
+                    life: data.duration
+                });
+
             }
         },
+
         //----------------------------------------------------------
         toastErrors(messages){
             let data = this.getMessageAndDuration(messages);
             if(data && data.html !== "")
             {
-
-                app.config.globalProperties.$toast.add({severity: ToastSeverity.INFO, summary: 'Success Message',
-                    detail:'Order submitted',
-                    life: 3000});
-
-
-                /*ElNotification({
-                    type: 'error',
-                    icon: 'warning',
-                    customClass: 'notification-error',
-                    offset: 68,
-                    position: 'top-right',
-                    message: data.html,
-                    duration: data.duration,
-                    appendTo: '#element-plus-notifications'
-                })*/
+                app.config.globalProperties.$toast.add({
+                    severity: 'error',
+                    detail: data.html,
+                    life: data.duration
+                });
             }
         },
         //----------------------------------------------------------
@@ -256,6 +230,11 @@ export const vaah = defineStore({
         //----------------------------------------------------------
         //----------------------------------------------------------
 
-
     }
 })
+
+
+// Pinia hot reload
+if (import.meta.hot) {
+    import.meta.hot.accept(acceptHMRUpdate(vaah, import.meta.hot))
+}

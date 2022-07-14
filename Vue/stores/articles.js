@@ -409,11 +409,7 @@ export const useArticlesStore = defineStore({
 
 
 
-
 // Pinia hot reload
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useArticlesStore, import.meta.hot))
 }
-
-
-
