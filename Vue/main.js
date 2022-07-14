@@ -106,7 +106,7 @@ import VirtualScroller from 'primevue/virtualscroller';
 
 //-------------APP
 import App from './layouts/App.vue'
-import router from './routes/router'
+
 
 const app = createApp(App);
 
@@ -116,7 +116,7 @@ pinia.use(({ store }) => {
 });
 app.use(pinia);
 app.use(PiniaVuePlugin);
-app.use(router);
+
 //-------------/APP
 
 
@@ -229,4 +229,11 @@ app.component('VhField', VhField);
 
 //-------------/VaahVue
 
+//-------------routes
+import router from './routes/router'
+app.use(router);
+//-------------/routes
+
 app.mount('#appVueThree')
+
+export default app;

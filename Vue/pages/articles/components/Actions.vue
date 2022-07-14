@@ -1,6 +1,9 @@
 <script  setup>
 import {ref} from 'vue';
 import { useArticlesStore } from '../../../stores/articles'
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+
 
 const store = useArticlesStore();
 
@@ -12,6 +15,12 @@ const selected_actions_menu_items = ref([
     {
         label: 'Mark as active',
         command: () => {
+            /*toast.add({
+                severity:'success',
+                summary: 'Success Message',
+                detail:'Order submitted',
+                life: 3000
+            });*/
             store.updateList('active')
         }
     },
@@ -61,13 +70,13 @@ const bulk_actions_menu_items = ref([
     {
         label: 'Mark all as active',
         command: () => {
-
+            store.bulkUpdateList('activate-all')
         }
     },
     {
         label: 'Mark all as inactive',
         command: () => {
-
+            store.bulkUpdateList('deactivate-all')
         }
     },
     {
@@ -77,21 +86,21 @@ const bulk_actions_menu_items = ref([
         label: 'Trash All',
         icon: 'pi pi-times',
         command: () => {
-
+            store.bulkUpdateList('trash-all')
         }
     },
     {
         label: 'Restore All',
         icon: 'pi pi-replay',
         command: () => {
-
+            store.bulkUpdateList('restore-all')
         }
     },
     {
         label: 'Delete All',
         icon: 'pi pi-trash',
         command: () => {
-
+            store.bulkUpdateList('delete-all')
         }
     },
 ]);

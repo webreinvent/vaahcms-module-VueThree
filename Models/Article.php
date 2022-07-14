@@ -242,12 +242,10 @@ class Article extends Model
 
         $rules = array(
             'type' => 'required',
-            'items' => 'required',
         );
 
         $messages = array(
             'type.required' => 'Action type is required',
-            'items.required' => 'Select items',
         );
 
 
@@ -260,7 +258,14 @@ class Article extends Model
             return $response;
         }
 
-        $items_id = collect($inputs['items'])->pluck('id')->toArray();
+        if(isset($inputs['items']))
+        {
+            $items_id = collect($inputs['items'])
+                ->pluck('id')
+                ->toArray();
+        }
+
+
 
         switch ($inputs['type']) {
             case 'inactive':
@@ -275,7 +280,21 @@ class Article extends Model
             case 'restore':
                 self::whereIn('id', $items_id)->restore();
                 break;
-
+            case 'activate-all':
+                self::update(['is_active' => 1]);
+                break;
+            case 'deactivate-all':
+                self::update(['is_active' => null]);
+                break;
+            case 'trash-all':
+                self::delete();
+                break;
+            case 'restore-all':
+                self::withTrashed()->restore();
+                break;
+            case 'delete-all':
+                self::withTrashed()->forceDelete();
+                break;
         }
 
         $response['success'] = true;

@@ -134,8 +134,6 @@ export const useArticlesStore = defineStore({
                 query: vaah().clone(this.query)
             }
 
-            console.log('options--->', options);
-
             await vaah().ajax(
                 this.ajax_url,
                 this.afterGetList,
@@ -218,6 +216,28 @@ export const useArticlesStore = defineStore({
                 this.updateListAfter,
                 options
             );
+        },
+        async bulkUpdateList(type){
+
+            if(!type)
+            {
+                vaah().toastErrors(['Select an action type']);
+                return false;
+            }
+            this.action.type = type;
+
+            let options = {
+                params: this.action,
+                method: 'put',
+                show_success: false
+            };
+
+            vaah().ajax(
+                this.ajax_url,
+                this.updateListAfter,
+                options
+            );
+
         },
         async updateListAfter(data, res) {
             if(data)
