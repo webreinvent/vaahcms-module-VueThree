@@ -57,21 +57,11 @@ export const useArticlesStore = defineStore({
 
     },
     actions: {
-        watchStates(state)
+        watchStates()
         {
-            watch(this.query.filter, async (newVal,oldVal) =>
+            watch(this.view, (newVal,oldVal) =>
                 {
-                    console.log('--->', newVal);
-
-                    this.query.filter = newVal;
-
-                    await this.delayedSearch();
-                },
-                { deep: true }
-            )
-
-            watch(state.view, (newVal,oldVal) =>
-                {
+                    console.log('state.view--->', newVal);
                     if(newVal === 'large')
                     {
                         this.list_view_width = 12;
@@ -93,6 +83,7 @@ export const useArticlesStore = defineStore({
             //watch routes
             watch(route, (newVal,oldVal) =>
                 {
+                    console.log('route--->', newVal);
                     this.route = newVal;
                     this.setViewAndWidth(newVal.name);
                     this.updateQueryFromUrl(newVal)
@@ -144,7 +135,7 @@ export const useArticlesStore = defineStore({
         {
             if(data)
             {
-                console.log('list data--->', data);
+                //console.log('list data--->', data);
                 this.list = data;
             }
         },
@@ -279,8 +270,6 @@ export const useArticlesStore = defineStore({
                 await self.updateUrlQueryString(self.query);
                 await self.getList();
             }, this.search.delay_time);
-
-
         },
         async updateUrlQueryString(query)
         {

@@ -89,8 +89,8 @@ export const vaah = defineStore({
                 };
             }
 
-            console.log('ajax method--->', method);
-            console.log('ajax params--->', params);
+            /*console.log('ajax method--->', method);
+            console.log('ajax params--->', params);*/
 
 
             let ajax = await axios[method](url, params, q)
@@ -187,7 +187,7 @@ export const vaah = defineStore({
 
             duration = duration*(chars/readable);
 
-            console.log('duration--->', duration);
+
 
             return {
                 html: list_html,

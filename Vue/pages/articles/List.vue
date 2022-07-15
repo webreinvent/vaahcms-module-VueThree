@@ -1,13 +1,13 @@
 <script setup>
 import {onMounted, reactive, ref} from "vue";
-import { useRoute } from 'vue-router';
+import {useRoute} from 'vue-router';
 
 
+import {useRootStore} from '../../stores/root'
 
-import { useRootStore } from '../../stores/root'
 const rootStore = useRootStore();
 
-import { useArticlesStore } from '../../stores/articles'
+import {useArticlesStore} from '../../stores/articles'
 import Actions from "./components/Actions.vue";
 import Table from "./components/Table.vue";
 
@@ -17,7 +17,7 @@ const route = useRoute();
 
 onMounted(async () => {
     await store.watchRoutes(route);
-    await store.watchStates;
+    await store.watchStates();
     await store.getAssets();
     await store.getList();
 });
@@ -28,113 +28,46 @@ onMounted(async () => {
 
     <div class="grid">
 
+        <div :class="'col-'+store.list_view_width">
+            <Panel>
 
-        <div :class="'col-'+store.list_view_width"  >
-            <Panel >
+                <template class="p-1" #header>
 
-        <template class="p-1" #header>
+                    <div class="flex flex-row">
+                        <div class="p-panel-title">
+                            Articles
+                            <Badge v-if="store.list && store.list.total > 0"
+                                   :value="store.list.total">
+                            </Badge>
+                        </div>
 
-
-            <div class="flex flex-row">
-                <div class="p-panel-title">
-                    Articles
-
-                    <Badge v-if="store.list" :value="store.list.total" ></Badge>
-                </div>
-
-            </div>
-
-
-        </template>
-
-        <template #icons>
-
-            <Button class="p-button-primary" @click="store.toForm()"  >Create</Button>
-
-        </template>
+                    </div>
 
 
-        <div>
+                </template>
 
-            <Actions></Actions>
+                <template #icons>
 
-            <br/>
+                    <Button class="p-button-primary"
+                            @click="store.toForm()">
+                        <i class="pi pi-plus mr-1"></i>
+                        Create
+                    </Button>
 
-            <div v-if="store.list">
+                </template>
 
-                <DataTable :value="store.list.data"
-                       class="p-datatable-sm"
-                       v-model:selection="store.action.items"
-                       stripedRows
-                       responsiveLayout="scroll">
+                <Actions/>
 
-                    <Column selectionMode="multiple"
-                            v-if="store.isViewLarge()"
-                            headerStyle="width: 3em">
-                    </Column>
+                <br/>
 
-                    <Column field="id" header="ID" :style="{width: store.getIdWidth()}" :sortable="true">
-                    </Column>
+                <Table/>
 
-                    <Column field="name" header="Name"
-                            :sortable="true">
-                    </Column>
-
-                    <Column field="is_active" v-if="store.isViewLarge()"
-                            :sortable="true"
-                            style="width:100px;"
-                            header="Is Active">
-
-                        <template #body="prop">
-
-                            <InputSwitch v-model.bool="prop.data.is_active"
-                                         class="p-inputswitch-sm"
-                                         v-bind:false-value="0"  v-bind:true-value="1" />
-                        </template>
-
-                    </Column>
-
-                    <Column field="actions" style="width:150px;"
-                            v-if="store.isViewLarge()"
-                            header="Actions">
-
-                        <template #body="prop">
-
-                            <div class="p-inputgroup ">
-
-                                <Button class="p-button-tiny p-button-text"
-                                        icon="pi pi-eye"/>
-
-                                <Button class="p-button-tiny p-button-text"
-                                        icon="pi pi-pencil"/>
-
-                                <Button class="p-button-tiny p-button-danger p-button-text"
-                                        icon="pi pi-trash"/>
-
-                            </div>
-
-                        </template>
-
-
-                    </Column>
-
-
-                </DataTable>
-
-
-
-            </div>
-
-
-
-        </div>
-    </Panel>
+            </Panel>
         </div>
 
         <RouterView/>
 
     </div>
-
 
 
 </template>

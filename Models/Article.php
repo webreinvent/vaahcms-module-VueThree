@@ -281,13 +281,13 @@ class Article extends Model
                 self::whereIn('id', $items_id)->restore();
                 break;
             case 'activate-all':
-                self::update(['is_active' => 1]);
+                self::whereNull('is_active')->update(['is_active' => 1]);
                 break;
             case 'deactivate-all':
-                self::update(['is_active' => null]);
+                self::whereNotNull('is_active')->update(['is_active' => null]);
                 break;
             case 'trash-all':
-                self::delete();
+                self::whereNull('deleted_at')->delete();
                 break;
             case 'restore-all':
                 self::withTrashed()->restore();
