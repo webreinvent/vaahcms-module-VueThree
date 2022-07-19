@@ -77,7 +77,7 @@
 @section('vaahcms_extend_backend_js')
 
     @if(env('MODULE_VUETHREE_ENV') == 'develop')
-        <script type="module" src="http://localhost:9087/Vue/main.js" defer></script>
+        <script type="module" src="http://localhost:9087/Vue/main.js"></script>
     @else
         <script type="module" src="{{vh_module_assets_url("VueThree", "build/index.js")}}"></script>
     @endif

@@ -11,7 +11,6 @@ import {useArticlesStore} from '../../stores/articles'
 import Actions from "./components/Actions.vue";
 import Table from "./components/Table.vue";
 
-
 const store = useArticlesStore();
 const route = useRoute();
 
@@ -21,9 +20,6 @@ onMounted(async () => {
     await store.getAssets();
     await store.getList();
 });
-
-
-
 
 </script>
 <template>
@@ -36,7 +32,7 @@ onMounted(async () => {
                 <template class="p-1" #header>
 
                     <div class="flex flex-row">
-                        <div class="p-panel-title">
+                        <div >
                             Articles
                             <Badge v-if="store.list && store.list.total > 0"
                                    :value="store.list.total">
@@ -45,13 +41,11 @@ onMounted(async () => {
 
                     </div>
 
-
                 </template>
 
                 <template #icons>
 
-                    <Button class="p-button-primary"
-                            @click="store.toForm()">
+                    <Button @click="store.toForm()">
                         <i class="pi pi-plus mr-1"></i>
                         Create
                     </Button>
