@@ -1,12 +1,15 @@
+
 import {defineStore, acceptHMRUpdate} from 'pinia'
-import { app } from '@/main';
 import axios from 'axios'
 import qs from "qs";
+//import Toast from "primevue/toast";
 
+//import { app } from '@/main';
 
 export const vaah = defineStore({
     id: 'vaah',
     state: () => ({
+        toast: null,
     }),
     getters: {},
     actions: {
@@ -187,25 +190,26 @@ export const vaah = defineStore({
 
             duration = duration*(chars/readable);
 
-
-
             return {
                 html: list_html,
                 duration: duration
             };
         },
         //----------------------------------------------------------
+        setToast: function (prime_toast)
+        {
+            this.toast = prime_toast;
+        },
+        //----------------------------------------------------------
         toastSuccess(messages){
             let data = this.getMessageAndDuration(messages);
             if(data && data.html !== "")
             {
-
-                app.config.globalProperties.$toast.add({
+                this.toast.add({
                     severity: 'success',
                     detail: data.html,
                     life: data.duration
                 });
-
             }
         },
 
@@ -214,7 +218,7 @@ export const vaah = defineStore({
             let data = this.getMessageAndDuration(messages);
             if(data && data.html !== "")
             {
-                app.config.globalProperties.$toast.add({
+                this.toast.add({
                     severity: 'error',
                     detail: data.html,
                     life: data.duration

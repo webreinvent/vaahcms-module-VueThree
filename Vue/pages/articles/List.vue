@@ -15,12 +15,15 @@ import Table from "./components/Table.vue";
 const store = useArticlesStore();
 const route = useRoute();
 
+
 onMounted(async () => {
     await store.watchRoutes(route);
     await store.watchStates();
     await store.getAssets();
     await store.getList();
 });
+
+
 
 
 </script>
