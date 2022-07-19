@@ -18,7 +18,6 @@ const route = useRoute();
 
 onMounted(async () => {
     await store.watchRoutes(route);
-    await store.watchStates();
     await store.getAssets();
     await store.getList();
 });

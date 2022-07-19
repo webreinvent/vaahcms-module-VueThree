@@ -56,22 +56,6 @@ export const useArticlesStore = defineStore({
 
     },
     actions: {
-        watchStates()
-        {
-            watch(this.view, (newVal,oldVal) =>
-                {
-                    console.log('state.view--->', newVal);
-                    if(newVal === 'large')
-                    {
-                        this.list_view_width = 12;
-                    } else{
-
-                    }
-                    this.list_view_width = 6;
-                },
-                { deep: true }
-            )
-        },
         watchRoutes(route)
         {
             //set initial value
@@ -82,11 +66,9 @@ export const useArticlesStore = defineStore({
             //watch routes
             watch(route, (newVal,oldVal) =>
                 {
-                    console.log('route--->', newVal);
                     this.route = newVal;
                     this.setViewAndWidth(newVal.name);
                     this.updateQueryFromUrl(newVal)
-
                 }, { deep: true }
             )
 
