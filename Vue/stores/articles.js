@@ -1,26 +1,26 @@
-import {watch} from 'vue'
-import {defineStore, acceptHMRUpdate} from 'pinia'
+import {watch, ref} from 'vue'
+import {defineStore, storeToRefs, acceptHMRUpdate} from 'pinia'
 import qs from 'qs'
 import {vaah} from '../vaahvue/pinia/vaah'
 
 let base_url = document.getElementsByTagName('base')[0].getAttribute("href");
 let ajax_url = base_url + "/backend/vuethree/articles";
 
-let empty_query = {
-    page: null,
-    filter: {
-        q: null,
-        is_active: null,
-        trashed: null,
-        sort: null,
+let empty_states = {
+    query: {
+        page: null,
+        filter: {
+            q: null,
+            is_active: null,
+            trashed: null,
+            sort: null,
+        },
     },
-};
-
-let empty_action = {
-    type: null,
-    items: [],
-};
-
+    action: {
+        type: null,
+        items: [],
+    }
+}
 
 export const useArticlesStore = defineStore({
     id: 'articles',
@@ -32,10 +32,10 @@ export const useArticlesStore = defineStore({
         list: null,
         item: null,
         fillable:null,
-        empty_query:empty_query,
-        empty_action:empty_action,
-        query: vaah().clone(empty_query),
-        action: vaah().clone(empty_action),
+        empty_query:empty_states.query,
+        empty_action:empty_states.action,
+        query: vaah().clone(empty_states.query),
+        action: vaah().clone(empty_states.action),
         search: {
             delay_time: 600, // time delay in milliseconds
             delay_timer: 0 // time delay in milliseconds
@@ -56,19 +56,29 @@ export const useArticlesStore = defineStore({
 
     },
     actions: {
-        watchRoutes(route)
+        async onLoad(route)
         {
             //set initial value
             this.route = route;
             this.setViewAndWidth(route.name);
-            this.updateQueryFromUrl(route)
-
+            this.updateQueryFromUrl(route);
+        },
+        watchStates()
+        {
+            watch(this.query, (newVal,oldVal) =>
+                {
+                    this.delayedSearch();
+                },{deep: true}
+            )
+        },
+        watchRoutes(route)
+        {
             //watch routes
             watch(route, (newVal,oldVal) =>
                 {
+                    console.log('route--->', newVal);
                     this.route = newVal;
                     this.setViewAndWidth(newVal.name);
-                    this.updateQueryFromUrl(newVal)
                 }, { deep: true }
             )
 
@@ -245,7 +255,6 @@ export const useArticlesStore = defineStore({
             let self = this;
             this.query.page = 1;
             this.action.items = [];
-
             clearTimeout(this.search.delay_timer);
             this.search.delay_timer = setTimeout(async function() {
                 await self.updateUrlQueryString(self.query);

@@ -1,12 +1,9 @@
 <script  setup>
-import {ref} from 'vue';
+import {ref, reactive, watch} from 'vue';
+import {storeToRefs} from 'pinia';
 import { useArticlesStore } from '../../../stores/articles'
-import { useToast } from "primevue/usetoast";
-const toast = useToast();
-
 
 const store = useArticlesStore();
-
 
 //--------selected_actions
 const selected_actions_menu = ref();
@@ -111,6 +108,14 @@ const toggleBulkActionsMenu = (event) => {
 };
 //--------end of selected_actions
 
+
+/*const { query } = storeToRefs(store);
+
+console.log('state--->', query);
+
+watch(query, () => {
+    console.log('some state var changed', query)
+})*/
 
 
 </script>
