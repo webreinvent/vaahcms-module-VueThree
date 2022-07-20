@@ -9,6 +9,7 @@ let ajax_url = base_url + "/backend/vuethree/articles";
 let empty_states = {
     query: {
         page: null,
+        rows: null,
         filter: {
             q: null,
             is_active: null,
@@ -29,6 +30,7 @@ export const useArticlesStore = defineStore({
         ajax_url: ajax_url,
         app: null,
         assets: null,
+        rows_per_page: [10,20,30,50,100,500],
         list: null,
         item: null,
         fillable:null,
@@ -65,7 +67,7 @@ export const useArticlesStore = defineStore({
         },
         watchStates()
         {
-            watch(this.query, (newVal,oldVal) =>
+            watch(this.query.filter, (newVal,oldVal) =>
                 {
                     this.delayedSearch();
                 },{deep: true}
@@ -108,13 +110,23 @@ export const useArticlesStore = defineStore({
             if(data)
             {
                 this.assets = data;
+                if(data.rows)
+                {
+                    this.query.rows = data.rows;
+                }
                 this.item = vaah().clone(data.empty_item);
             }
+        },
+        async paginate(event) {
+            this.query.page = event.page+1;
+            this.getList();
         },
         async getList() {
             let options = {
                 query: vaah().clone(this.query)
             }
+
+            console.log('options--->', options);
 
             await vaah().ajax(
                 this.ajax_url,
@@ -167,15 +179,12 @@ export const useArticlesStore = defineStore({
                 this.getList();
             }
         },
-        async paginate() {
 
-        },
         onItemSelection(items)
         {
             this.action.items = items;
         },
         async updateList(type){
-
             if(!type)
             {
                 vaah().toastErrors(['Select an action type']);

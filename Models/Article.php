@@ -224,7 +224,14 @@ class Article extends Model
         $list->trashedFilter($request->filter);
         $list->searchFilter($request->filter);
 
-        $list = $list->paginate(config('vaahcms.per_page'));
+        $rows = config('vaahcms.per_page');
+
+        if($request->has('rows'))
+        {
+            $rows = $request->rows;
+        }
+
+        $list = $list->paginate($rows);
 
         $response['success'] = true;
         $response['data'] = $list;

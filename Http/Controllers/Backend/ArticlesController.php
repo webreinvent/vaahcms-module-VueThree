@@ -23,6 +23,7 @@ class ArticlesController extends Controller
         $data = [];
 
         $data['permission'] = [];
+        $data['rows'] = config('vaahcms.per_page');
 
         $data['fillable']['except'] = [
             'uuid',

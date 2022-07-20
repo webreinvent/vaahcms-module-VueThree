@@ -6,7 +6,8 @@ const store = useArticlesStore();
 <template>
 
     <div v-if="store.list">
-        <DataTable :value="store.list.data"
+        <!--table-->
+            <DataTable :value="store.list.data"
                    class="p-datatable-sm"
                    v-model:selection="store.action.items"
                    stripedRows
@@ -64,6 +65,16 @@ const store = useArticlesStore();
 
 
         </DataTable>
+        <!--/table-->
+
+        <!--paginator-->
+        <Paginator v-model:rows="store.query.rows"
+                   :totalRecords="store.list.total"
+                   @page="store.paginate($event)"
+                   :rowsPerPageOptions="store.rows_per_page">
+        </Paginator>
+        <!--/paginator-->
+
     </div>
 
 </template>
