@@ -1,8 +1,10 @@
 <script setup>
 import {onMounted, ref} from "vue";
-
 import { useRootStore } from '../../stores/root'
 const rootStore = useRootStore();
+
+import VhField from './../../vaahvue/vue-three/primeflex/VhField.vue'
+
 
 import { useArticlesStore } from '../../stores/articles'
 

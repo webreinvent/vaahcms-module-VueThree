@@ -1,12 +1,11 @@
-import {defineStore, acceptHMRUpdate} from 'pinia'
-import axios from 'axios'
-
+import {defineStore, acceptHMRUpdate} from 'pinia';
 
 export const useRootStore = defineStore({
     id: 'root',
     state: () => ({
         assets: null,
         gutter: 20,
+        show_progress_bar: false,
     }),
     getters: {},
     actions: {
@@ -18,6 +17,14 @@ export const useRootStore = defineStore({
         async to(path)
         {
             this.$router.push({path: path})
+        },
+        showProgress()
+        {
+            this.show_progress_bar = true;
+        },
+        hideProgress()
+        {
+            this.show_progress_bar = false;
         }
 
     }

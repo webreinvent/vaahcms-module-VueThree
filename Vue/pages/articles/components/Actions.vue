@@ -3,6 +3,9 @@ import {ref, reactive, watch} from 'vue';
 import {storeToRefs} from 'pinia';
 import { useArticlesStore } from '../../../stores/articles'
 
+import VhFieldVertical from './../../../vaahvue/vue-three/primeflex/VhFieldVertical.vue'
+import Filters from './Filters.vue'
+
 const store = useArticlesStore();
 
 //--------selected_actions
@@ -109,14 +112,15 @@ const toggleBulkActionsMenu = (event) => {
 //--------end of selected_actions
 
 
-/*const { query } = storeToRefs(store);
+const cities = ref([
+    {name: 'New York', code: 'NY'},
+    {name: 'Rome', code: 'RM'},
+    {name: 'London', code: 'LDN'},
+    {name: 'Istanbul', code: 'IST'},
+    {name: 'Paris', code: 'PRS'}
+]);
 
-console.log('state--->', query);
-
-watch(query, () => {
-    console.log('some state var changed', query)
-})*/
-
+const selectedCity1 = ref();
 
 </script>
 
@@ -193,10 +197,13 @@ watch(query, () => {
                             <Badge value="2"></Badge>
                         </Button>
 
+
+
                     </div>
                 </div>
 
 
+                <Filters/>
 
             </div>
 

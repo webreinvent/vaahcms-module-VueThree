@@ -1,4 +1,3 @@
-
 import {defineStore, acceptHMRUpdate} from 'pinia'
 import axios from 'axios'
 import qs from "qs";
@@ -10,6 +9,7 @@ export const vaah = defineStore({
     id: 'vaah',
     state: () => ({
         toast: null,
+        show_progress_bar: false,
     }),
     getters: {},
     actions: {
@@ -92,12 +92,11 @@ export const vaah = defineStore({
                 };
             }
 
-            /*console.log('ajax method--->', method);
-            console.log('ajax params--->', params);*/
-
+            this.show_progress_bar = true;
 
             let ajax = await axios[method](url, params, q)
                 .then(function (response) {
+                    self.show_progress_bar = false;
                     self.processResponse(response, show_success);
                     if(callback)
                     {
@@ -110,6 +109,7 @@ export const vaah = defineStore({
                     }
                     return response;
                 }).catch(function (error) {
+                    self.show_progress_bar = false;
                     self.processError(error);
                     if(callback)
                     {

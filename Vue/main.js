@@ -222,11 +222,6 @@ app.component('VirtualScroller', VirtualScroller);
 //-------------/PrimeVue Use
 
 
-//-------------VaahVue
-import VhField from './vaahvue/vue-three/components/VhField.vue'
-app.component('VhField', VhField);
-//-------------/VaahVue
-
 app.mount('#appVueThree')
 
 

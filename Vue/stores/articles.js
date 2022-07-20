@@ -3,6 +3,7 @@ import {defineStore, storeToRefs, acceptHMRUpdate} from 'pinia'
 import qs from 'qs'
 import {vaah} from '../vaahvue/pinia/vaah'
 
+
 let base_url = document.getElementsByTagName('base')[0].getAttribute("href");
 let ajax_url = base_url + "/backend/vuethree/articles";
 
