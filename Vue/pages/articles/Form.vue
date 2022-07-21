@@ -1,7 +1,6 @@
 <script setup>
 import {onMounted, ref} from "vue";
-import { useRootStore } from '../../stores/root'
-const rootStore = useRootStore();
+
 
 import VhField from './../../vaahvue/vue-three/primeflex/VhField.vue'
 
@@ -78,8 +77,14 @@ const toggleActionsMenu = (event) => {
 
 
                 <div class="p-inputgroup">
+                    <Button label="Save"
+                            v-if="store.item && store.item.id"
+                            @click="store.setFormAction('save')"
+                            icon="pi pi-save"/>
+
                     <Button label="Save & New"
-                            @click="store.create()"
+                            v-else
+                            @click="store.setFormAction('save-and-new')"
                             icon="pi pi-save"/>
 
 
@@ -101,7 +106,7 @@ const toggleActionsMenu = (event) => {
 
                     <Button class="p-button-primary"
                             icon="pi pi-times"
-                            @click="rootStore.to('/articles')">
+                            @click="store.toList()">
                     </Button>
                 </div>
 

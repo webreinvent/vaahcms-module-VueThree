@@ -1,9 +1,7 @@
 <script  setup>
 import {ref, reactive, watch} from 'vue';
-import {storeToRefs} from 'pinia';
 import { useArticlesStore } from '../../../stores/articles'
 
-import VhFieldVertical from './../../../vaahvue/vue-three/primeflex/VhFieldVertical.vue'
 import Filters from './Filters.vue'
 
 const store = useArticlesStore();

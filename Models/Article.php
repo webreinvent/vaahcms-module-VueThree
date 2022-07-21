@@ -462,6 +462,9 @@ class Article extends Model
             return $response;
         }
 
+        $response['success'] = true;
+        return $response;
+
     }
 
     //-------------------------------------------------

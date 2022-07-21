@@ -2,11 +2,6 @@
 import {onMounted, reactive, ref} from "vue";
 import {useRoute} from 'vue-router';
 
-
-import {useRootStore} from '../../stores/root'
-
-const rootStore = useRootStore();
-
 import {useArticlesStore} from '../../stores/articles'
 import Actions from "./components/Actions.vue";
 import Table from "./components/Table.vue";

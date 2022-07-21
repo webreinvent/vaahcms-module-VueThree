@@ -89,13 +89,13 @@ export const useArticlesStore = defineStore({
         {
             switch(route_name)
             {
-                case 'articles.form':
-                    this.view = 'small';
-                    this.list_view_width = 6;
-                    break;
-                default:
+                case 'articles.index':
                     this.view = 'large';
                     this.list_view_width = 12;
+                    break;
+                default:
+                    this.view = 'small';
+                    this.list_view_width = 6;
                     break
             }
         },
@@ -147,12 +147,11 @@ export const useArticlesStore = defineStore({
         async setFormAction(action)
         {
             this.form.action = action;
-
-            switch(action)
+            if(this.item.id)
             {
-                case 'save-and-new':
-                    await this.create();
-                    break;
+                await this.store();
+            } else{
+                await this.create();
             }
         },
         async create() {
@@ -172,11 +171,41 @@ export const useArticlesStore = defineStore({
         {
             if(data)
             {
-                this.item = vaah().clone(this.assets.empty_item);
                 this.getList();
+                this.performFormAction();
+            }
+        },
+        async store() {
+
+            let options = {
+                params: this.item,
+                method: 'put',
+            };
+
+            vaah().ajax(
+                ajax_url+'/'+this.item.id,
+                this.storeCreate,
+                options
+            );
+        },
+        storeCreate(data, res)
+        {
+            if(data)
+            {
+                this.getList();
+                this.performFormAction();
             }
         },
 
+        performFormAction: function ()
+        {
+            switch (this.form.action)
+            {
+                case 'save-and-new':
+                    this.item = vaah().clone(this.assets.empty_item);
+                    break;
+            }
+        },
         onItemSelection(items)
         {
             this.action.items = items;
@@ -333,7 +362,7 @@ export const useArticlesStore = defineStore({
             {
                 this.query.filter[key] = null;
             }
-            
+
             await this.updateUrlQueryString(this.query);
         },
         resetNewItem()
@@ -350,11 +379,25 @@ export const useArticlesStore = defineStore({
 
 
         },
+        toList()
+        {
+            this.item = null;
+            this.$router.push({name: 'articles.index'})
+        },
         toForm()
         {
+            this.item = vaah().clone(this.assets.empty_item);
             this.$router.push({name: 'articles.form'})
-
-
+        },
+        toView(item)
+        {
+            this.item = item;
+            this.$router.push({name: 'articles.view', params:{id:item.id}})
+        },
+        toEdit(item)
+        {
+            this.item = item;
+            this.$router.push({name: 'articles.form', params:{id:item.id}})
         },
         setRegisteredBy()
         {
@@ -362,24 +405,13 @@ export const useArticlesStore = defineStore({
         },
         isViewLarge()
         {
-
-            if(this.view === 'large')
-            {
-                return true;
-            }
-
-            return false;
-
+            return this.view === 'large';
         },
         setRowClass()
         {
 
         },
         changeStatus()
-        {
-
-        },
-        setActiveItem()
         {
 
         },
@@ -395,6 +427,26 @@ export const useArticlesStore = defineStore({
             }
 
             return width+'px';
+        },
+        getActionWidth()
+        {
+            let width = 100;
+            if(!this.isViewLarge())
+            {
+                width = 80;
+            }
+
+            return width+'px';
+        },
+        getActionLabel()
+        {
+            let text = null;
+            if(this.isViewLarge())
+            {
+                text = 'Actions';
+            }
+
+            return text;
         },
     }
 })

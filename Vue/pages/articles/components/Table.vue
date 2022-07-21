@@ -30,12 +30,12 @@ const useVaah = vaah();
 
 
                 <Column field="updated_at" header="Updated"
+                        v-if="store.isViewLarge()"
+                        style="width:150px;"
                         :sortable="true">
 
                     <template #body="prop">
-
                         {{useVaah.ago(prop.data.updated_at)}}
-
                     </template>
 
                 </Column>
@@ -46,7 +46,6 @@ const useVaah = vaah();
                     header="Is Active">
 
                 <template #body="prop">
-
                     <InputSwitch v-model.bool="prop.data.is_active"
                                  class="p-inputswitch-sm"
                                  v-bind:false-value="0"  v-bind:true-value="1" />
@@ -55,20 +54,22 @@ const useVaah = vaah();
             </Column>
 
             <Column field="actions" style="width:150px;"
-                    v-if="store.isViewLarge()"
-                    header="Actions">
+                    :style="{width: store.getActionWidth() }"
+                    :header="store.getActionLabel()">
 
                 <template #body="prop">
-
                     <div class="p-inputgroup ">
 
                         <Button class="p-button-tiny p-button-text"
+                                @click="store.toView(prop.data)"
                                 icon="pi pi-eye"/>
 
                         <Button class="p-button-tiny p-button-text"
+                                @click="store.toEdit(prop.data)"
                                 icon="pi pi-pencil"/>
 
                         <Button class="p-button-tiny p-button-danger p-button-text"
+                                v-if="store.isViewLarge()"
                                 icon="pi pi-trash"/>
 
                     </div>
