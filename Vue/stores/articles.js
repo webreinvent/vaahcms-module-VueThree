@@ -126,8 +126,6 @@ export const useArticlesStore = defineStore({
                 query: vaah().clone(this.query)
             }
 
-            console.log('options--->', options);
-
             await vaah().ajax(
                 this.ajax_url,
                 this.afterGetList,
@@ -138,7 +136,6 @@ export const useArticlesStore = defineStore({
         {
             if(data)
             {
-                //console.log('list data--->', data);
                 this.list = data;
             }
         },
@@ -336,9 +333,7 @@ export const useArticlesStore = defineStore({
             {
                 this.query.filter[key] = null;
             }
-
-            console.log('--->', this.query.filter);
-
+            
             await this.updateUrlQueryString(this.query);
         },
         resetNewItem()
