@@ -1,5 +1,5 @@
-import {watch, ref} from 'vue'
-import {defineStore, storeToRefs, acceptHMRUpdate} from 'pinia'
+import {watch} from 'vue'
+import {acceptHMRUpdate, defineStore} from 'pinia'
 import qs from 'qs'
 import {vaah} from '../vaahvue/pinia/vaah'
 
@@ -79,7 +79,6 @@ export const useArticlesStore = defineStore({
             //watch routes
             watch(route, (newVal,oldVal) =>
                 {
-                    console.log('route--->', newVal);
                     this.route = newVal;
                     this.setViewAndWidth(newVal.name);
                 }, { deep: true }
@@ -282,11 +281,7 @@ export const useArticlesStore = defineStore({
             });
             let query_object = qs.parse(query_string);
 
-            let filter = vaah().cleanObject(query_object.filter);
-            query_object.filter = filter;
-
-            console.log('query_object--->', query_object.filter);
-
+            query_object.filter = vaah().cleanObject(query_object.filter);
 
             //reset url query string
             await this.$router.replace({query: null});
@@ -295,24 +290,17 @@ export const useArticlesStore = defineStore({
             await this.$router.replace({query: query_object});
 
             //update applied filters
-            this.countFilters();
+            this.countFilters(query_object);
 
         },
-        countFilters: function (url_query=null)
+        countFilters: function (query)
         {
-            if(!url_query)
-            {
-                console.log('this.$route.query--->', this.$route.query);
-                url_query = this.$route.query;
-            }
-
             this.count_filters = 0;
-
-            if(url_query.filter)
+            if(query && query.filter)
             {
-                this.count_filters = Object.keys(url_query.filter).length;
+                let filter = vaah().cleanObject(query.filter);
+                this.count_filters = Object.keys(filter).length;
             }
-
         },
         async updateQueryFromUrl(route)
         {
@@ -324,7 +312,7 @@ export const useArticlesStore = defineStore({
                     {
                         this.query[key] = route.query[key]
                     }
-                    this.countFilters();
+                    this.countFilters(route.query);
                 }
             }
         },
