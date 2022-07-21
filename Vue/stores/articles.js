@@ -278,9 +278,15 @@ export const useArticlesStore = defineStore({
 
             //create query string
             let query_string = qs.stringify(query, {
-                skipNulls: true
+                skipNulls: true,
             });
             let query_object = qs.parse(query_string);
+
+            let filter = vaah().cleanObject(query_object.filter);
+            query_object.filter = filter;
+
+            console.log('query_object--->', query_object.filter);
+
 
             //reset url query string
             await this.$router.replace({query: null});
@@ -289,24 +295,38 @@ export const useArticlesStore = defineStore({
             await this.$router.replace({query: query_object});
 
             //update applied filters
-            if(query_object && query_object.filter)
+            this.countFilters();
+
+        },
+        countFilters: function (url_query=null)
+        {
+            if(!url_query)
             {
-                this.count_filters = Object.keys(query_object.filter).length;
-            } else{
-                this.count_filters = 0;
+                console.log('this.$route.query--->', this.$route.query);
+                url_query = this.$route.query;
+            }
+
+            this.count_filters = 0;
+
+            if(url_query.filter)
+            {
+                this.count_filters = Object.keys(url_query.filter).length;
             }
 
         },
         async updateQueryFromUrl(route)
         {
-            if(Object.keys(route.query).length > 0)
+            if(route.query)
             {
-                for(let key in route.query)
+                if(Object.keys(route.query).length > 0)
                 {
-                    this.query[key] = route.query[key]
+                    for(let key in route.query)
+                    {
+                        this.query[key] = route.query[key]
+                    }
+                    this.countFilters();
                 }
             }
-
         },
         async clearSearch()
         {

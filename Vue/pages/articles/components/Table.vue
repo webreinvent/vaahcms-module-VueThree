@@ -1,6 +1,9 @@
 <script setup>
+import { vaah } from '../../../vaahvue/pinia/vaah'
 import { useArticlesStore } from '../../../stores/articles'
 const store = useArticlesStore();
+const useVaah = vaah();
+
 </script>
 
 <template>
@@ -24,6 +27,18 @@ const store = useArticlesStore();
             <Column field="name" header="Name"
                     :sortable="true">
             </Column>
+
+
+                <Column field="updated_at" header="Updated"
+                        :sortable="true">
+
+                    <template #body="prop">
+
+                        {{useVaah.ago(prop.data.updated_at)}}
+
+                    </template>
+
+                </Column>
 
             <Column field="is_active" v-if="store.isViewLarge()"
                     :sortable="true"

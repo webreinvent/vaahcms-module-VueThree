@@ -48,7 +48,7 @@ const store = useArticlesStore();
 
                 <div class="field-radiobutton">
                     <RadioButton name="active-all"
-                                 value=""
+                                 value="null"
                                  v-model="store.query.filter.is_active" />
                     <label for="active-all">All</label>
                 </div>

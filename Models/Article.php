@@ -154,6 +154,7 @@ class Article extends Model
 
         $sort = $filter['sort'];
 
+
         $direction = Str::contains($sort, ':');
 
         if(!$direction)
