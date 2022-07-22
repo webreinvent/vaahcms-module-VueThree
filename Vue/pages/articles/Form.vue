@@ -1,16 +1,24 @@
 <script setup>
-import {onMounted, ref} from "vue";
-
-
+import {onMounted, ref, watch} from "vue";
 import VhField from './../../vaahvue/vue-three/primeflex/VhField.vue'
-
-
 import { useArticlesStore } from '../../stores/articles'
+import {useRoute} from 'vue-router';
+
 
 const store = useArticlesStore();
+const route = useRoute();
 
 onMounted(async () => {
+    if(route.params && route.params.id)
+    {
+        await store.getItem(route.params.id);
 
+        watch(route, async (newVal,oldVal) =>
+            {
+                await store.getItem(route.params.id);
+            }, { deep: true }
+        )
+    }
 });
 
 //--------actions_menu
@@ -65,7 +73,12 @@ const toggleActionsMenu = (event) => {
 
                 <div class="flex flex-row">
                     <div class="p-panel-title">
-                        Create
+                        <span v-if="store.item && store.item.id">
+                            Update
+                        </span>
+                        <span v-else>
+                            Create
+                        </span>
                     </div>
 
                 </div>
@@ -128,7 +141,9 @@ const toggleActionsMenu = (event) => {
                 </VhField>
 
                 <VhField label="Is Active">
-                    <InputSwitch  v-model="store.item.is_active">
+                    <InputSwitch v-bind:false-value="0"
+                                 v-bind:true-value="1"
+                                 v-model="store.item.is_active">
                     </InputSwitch>
                 </VhField>
 

@@ -184,11 +184,11 @@ export const useArticlesStore = defineStore({
 
             vaah().ajax(
                 ajax_url+'/'+this.item.id,
-                this.storeCreate,
+                this.storeAfter,
                 options
             );
         },
-        storeCreate(data, res)
+        storeAfter(data, res)
         {
             if(data)
             {
@@ -196,7 +196,19 @@ export const useArticlesStore = defineStore({
                 this.performFormAction();
             }
         },
-
+        async getItem(id) {
+            vaah().ajax(
+                ajax_url+'/'+id,
+                this.getItemAfter
+            );
+        },
+        getItemAfter(data, res)
+        {
+            if(data)
+            {
+                this.item = data;
+            }
+        },
         performFormAction: function ()
         {
             switch (this.form.action)
@@ -376,8 +388,6 @@ export const useArticlesStore = defineStore({
         closeForm()
         {
             this.$router.push({name: 'articles.index'})
-
-
         },
         toList()
         {
@@ -391,7 +401,6 @@ export const useArticlesStore = defineStore({
         },
         toView(item)
         {
-            this.item = item;
             this.$router.push({name: 'articles.view', params:{id:item.id}})
         },
         toEdit(item)

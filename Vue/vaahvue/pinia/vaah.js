@@ -247,7 +247,71 @@ export const vaah = defineStore({
             });
 
             return obj;
-        }
+        },
+        //----------------------------------------------------------
+        copy: function (string)
+        {
+            if (!navigator.clipboard) {
+                this.fallbackCopy(string);
+                return;
+            }
+
+            let self = this;
+
+            navigator.clipboard.writeText(string).then(function() {
+                self.toastSuccess(['Copied']);
+            }, function(err) {
+                self.toastErrors(['Could not copied | '+err]);
+            });
+
+        },
+        //----------------------------------------------------------
+        fallbackCopy: function (string)
+        {
+            let textArea = document.createElement("textarea");
+            textArea.value = string;
+
+            // Avoid scrolling to bottom
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            let self = this;
+
+            try {
+                let successful = document.execCommand('copy');
+                let msg = successful ? 'successful' : 'unsuccessful';
+                self.toastSuccess(['Copied']);
+            } catch (err) {
+                self.toastErrors(['Could not copied | '+err]);
+            }
+
+            document.body.removeChild(textArea);
+        },
+        //----------------------------------------------------------
+        toLabel: function(str)
+        {
+            if(typeof str === 'string' )
+            {
+                str = str.replace(/_/g, " ");
+                str = this.toUpperCaseWords(str);
+                return str;
+            }
+
+        },
+        //----------------------------------------------------------
+        toUpperCaseWords: function(str)
+        {
+            if(str)
+            {
+                return str.charAt(0).toUpperCase() + str.slice(1);
+            }
+        },
+        //----------------------------------------------------------
         //----------------------------------------------------------
     }
 })

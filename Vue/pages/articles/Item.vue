@@ -1,8 +1,25 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
+import {useRoute} from 'vue-router';
+
 import { useArticlesStore } from '../../stores/articles'
+import VhViewRow from '../../vaahvue/vue-three/primeflex/VhViewRow.vue';
 const store = useArticlesStore();
+const route = useRoute();
+
 onMounted(async () => {
+    if(route.params && !route.params.id)
+    {
+        store.toList();
+    }
+
+    await store.getItem(route.params.id);
+
+    watch(route, async (newVal,oldVal) =>
+        {
+            await store.getItem(route.params.id);
+        }, { deep: true }
+    )
 
 });
 
@@ -51,14 +68,14 @@ const toggleActionsMenu = (event) => {
 
     <div class="col-6" >
 
-        <Panel >
+        <Panel v-if="store && store.item">
 
             <template class="p-1" #header>
 
-
                 <div class="flex flex-row">
+
                     <div class="p-panel-title">
-                        Create
+                        #{{store.item.id}}
                     </div>
 
                 </div>
@@ -101,7 +118,49 @@ const toggleActionsMenu = (event) => {
 
 
             <div v-if="store.item">
-                asdf
+
+                <div class="p-datatable p-component p-datatable-responsive-scroll p-datatable-striped p-datatable-sm">
+                <table class="p-datatable-table">
+                    <tbody class="p-datatable-tbody">
+                    <template v-for="(value, column) in store.item ">
+
+                        <template v-if="column === 'created_by' || column === 'updated_by'">
+                        </template>
+
+                        <template v-else-if="column === 'id' || column === 'uuid'">
+                            <VhViewRow :label="column"
+                                       :value="value"
+                                       :can_copy="true"
+                            />
+                        </template>
+
+                        <template v-else-if="(column === 'created_by_user' || column === 'updated_by_user'  || column === 'deleted_by_user') && (typeof value === 'object' && value !== null)">
+                            <VhViewRow :label="column"
+                                       :value="value"
+                                       type="user"
+                            />
+                        </template>
+
+                        <template v-else-if="column === 'is_active'">
+                            <VhViewRow :label="column"
+                                       :value="value"
+                                       type="yes-no"
+                            />
+                        </template>
+
+                        <template v-else>
+                            <VhViewRow :label="column"
+                                       :value="value"
+                                       />
+                        </template>
+
+
+                    </template>
+                    </tbody>
+
+                </table>
+
+                </div>
             </div>
         </Panel>
 

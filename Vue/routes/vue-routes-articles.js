@@ -19,7 +19,7 @@ routes_list = {
             props: true,
         },
         {
-            path: 'view/:id',
+            path: 'view/:id?',
             name: 'articles.view',
             component: Item,
             props: true,
