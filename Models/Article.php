@@ -288,6 +288,9 @@ class Article extends Model
             case 'restore':
                 self::whereIn('id', $items_id)->restore();
                 break;
+            case 'delete':
+                self::whereIn('id', $items_id)->forceDelete();
+                break;
             case 'activate-all':
                 self::whereNull('is_active')->update(['is_active' => 1]);
                 break;
