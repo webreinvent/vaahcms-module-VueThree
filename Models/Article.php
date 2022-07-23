@@ -108,7 +108,7 @@ class Article extends Model
         $inputs = $request->all();
 
         $validation = self::validation($inputs);
-        if (isset($validation['failed'])) {
+        if (!$validation['success']) {
             return $validation;
         }
 
@@ -458,7 +458,7 @@ class Article extends Model
         if ($validator->fails()) {
             $messages = $validator->errors();
             $response['success'] = false;
-            $response['messages'] = $messages;
+            $response['messages'] = $messages->all();
             return $response;
         }
 

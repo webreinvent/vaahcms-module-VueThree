@@ -29,6 +29,12 @@ const actions_menu_items = ref([
         label: 'Save & Close',
         icon: 'pi pi-check',
         command: () => {
+            store.form.action = 'save-and-close';
+            if(store.item && store.item.id){
+                store.store();
+            }else{
+                store.create();
+            }
 
         }
     },
@@ -36,21 +42,26 @@ const actions_menu_items = ref([
         label: 'Save & Clone',
         icon: 'pi pi-copy',
         command: () => {
-
+            store.form.action = 'save-and-clone';
+            if(store.item && store.item.id){
+                store.store();
+            }else{
+                store.create();
+            }
         }
     },
     {
         label: 'Reset',
         icon: 'pi pi-refresh',
         command: () => {
-
+            store.setActiveItem();
         }
     },
     {
         label: 'Fill',
         icon: 'pi pi-pencil',
         command: () => {
-
+            store.getFaker();
         }
     },
 ]);
