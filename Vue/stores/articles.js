@@ -125,7 +125,11 @@ export const useArticlesStore = defineStore({
                 {
                     this.query.rows = data.rows;
                 }
-                this.item = vaah().clone(data.empty_item);
+
+                if(this.route.params && !this.route.params.id){
+                    this.item = vaah().clone(data.empty_item);
+                }
+
             }
         },
         async paginate(event) {
@@ -135,7 +139,7 @@ export const useArticlesStore = defineStore({
         async getList() {
             let options = {
                 query: vaah().clone(this.query)
-            }
+            };
 
             await vaah().ajax(
                 this.ajax_url,
@@ -240,10 +244,14 @@ export const useArticlesStore = defineStore({
             }
         },
         async getItem(id) {
-            vaah().ajax(
-                ajax_url+'/'+id,
-                this.getItemAfter
-            );
+
+            if(id){
+                vaah().ajax(
+                    ajax_url+'/'+id,
+                    this.getItemAfter
+                );
+            }
+
         },
         getItemAfter(data, res)
         {
@@ -454,6 +462,7 @@ export const useArticlesStore = defineStore({
         },
         toView(item)
         {
+            this.item = vaah().clone(item);
             this.$router.push({name: 'articles.view', params:{id:item.id}})
         },
         toEdit(item)

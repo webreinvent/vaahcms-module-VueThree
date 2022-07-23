@@ -8,16 +8,27 @@ const store = useArticlesStore();
 const route = useRoute();
 
 onMounted(async () => {
+
     if(route.params && !route.params.id)
     {
         store.toList();
+
+        return false;
     }
 
     await store.getItem(route.params.id);
 
     watch(route, async (newVal,oldVal) =>
         {
+            if(newVal.params && !newVal.params.id
+                && newVal.name === 'articles.view')
+            {
+                store.toList();
+            }
+
             await store.getItem(route.params.id);
+
+
         }, { deep: true }
     )
 
