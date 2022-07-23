@@ -342,6 +342,49 @@ export const vaah = defineStore({
             }
         },
         //----------------------------------------------------------
+        removeInArrayByKey: function (array, element, key) {
+
+            if(!Array.isArray(array))
+            {
+                return false;
+            }
+
+            array.map(function(item, index) {
+
+                if(item[key] == element[key])
+                {
+                    array.splice(index, 1);
+                }
+
+
+            });
+
+            return array;
+        },
+        //----------------------------------------------------------
+        findInArrayByKey: function (array, key, value) {
+
+            if(!Array.isArray(array))
+            {
+                return false;
+            }
+
+            let element = null;
+
+            array.map(function(item, index) {
+
+                if(item[key] == value)
+                {
+                    element = item;
+                }
+
+            });
+
+            return element;
+        },
+        //----------------------------------------------------------
+        //----------------------------------------------------------
+        //----------------------------------------------------------
         //----------------------------------------------------------
     }
 })

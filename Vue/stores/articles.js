@@ -58,6 +58,15 @@ export const useArticlesStore = defineStore({
         },
         is_list_loading: null,
         count_filters: 0,
+        item_menu_list: [
+            {
+                label: 'Delete',
+                icon: 'pi pi-trash',
+                command: () => {
+                    this.updateItem('delete');
+                }
+            }
+        ]
     }),
     getters: {
 
@@ -260,6 +269,7 @@ export const useArticlesStore = defineStore({
             }else{
                 this.$router.push({name: 'articles.index'});
             }
+            this.getItemMenu();
         },
         performFormAction: function ()
         {
@@ -522,6 +532,7 @@ export const useArticlesStore = defineStore({
                 this.getList();
                 if(this.route.params && this.route.params.id){
                     this.getItem(this.route.params.id);
+
                 }
 
             }
@@ -558,8 +569,68 @@ export const useArticlesStore = defineStore({
 
             return text;
         },
+        getItemMenu()
+        {
+
+            if(this.item && this.item.deleted_at)
+            {
+
+                let restore_menu = vaah().findInArrayByKey(this.item_menu_list, 'label', 'Restore');
+
+
+                if(!restore_menu){
+                    this.item_menu_list.push({
+                        label: 'Restore',
+                        icon: 'pi pi-refresh',
+                        command: () => {
+                            this.updateItem('restore');
+                        }
+                    });
+                }
+
+
+                let trash_menu = vaah().findInArrayByKey(this.item_menu_list, 'label', 'Trash');
+
+                if(trash_menu)
+                {
+                    this.item_menu_list = vaah().removeInArrayByKey(this.item_menu_list, trash_menu, 'label');
+                }
+
+
+            }
+
+            if(this.item && this.item.id && !this.item.deleted_at)
+            {
+
+                let trash_menu = vaah().findInArrayByKey(this.item_menu_list, 'label', 'Trash');
+
+
+                if(!trash_menu){
+                    this.item_menu_list.push({
+                        label: 'Trash',
+                        icon: 'pi pi-exclamation-triangle',
+                        command: () => {
+                            this.updateItem('trash');
+                        }
+                    });
+                }
+
+
+                let restore_menu = vaah().findInArrayByKey(this.item_menu_list, 'label', 'Restore');
+
+                if(restore_menu)
+                {
+                    this.item_menu_list = vaah().removeInArrayByKey(this.item_menu_list, restore_menu, 'label');
+                }
+
+
+            }
+
+
+            return this.item_menu_list;
+        },
     }
-})
+});
 
 
 
