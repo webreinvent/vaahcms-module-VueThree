@@ -9,6 +9,9 @@ const store = useArticlesStore();
 const route = useRoute();
 
 onMounted(async () => {
+
+    await store.getAssets();
+
     if(route.params && route.params.id)
     {
         await store.getItem(route.params.id);

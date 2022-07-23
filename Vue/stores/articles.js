@@ -32,6 +32,7 @@ export const useArticlesStore = defineStore({
         base_url: base_url,
         ajax_url: ajax_url,
         model: model_namespace,
+        assets_is_fetching: true,
         app: null,
         assets: null,
         rows_per_page: [10,20,30,50,100,500],
@@ -103,10 +104,17 @@ export const useArticlesStore = defineStore({
             }
         },
         async getAssets() {
-            vaah().ajax(
-                this.ajax_url+'/assets',
-                this.afterGetAssets,
-            );
+
+            if(this.assets_is_fetching === true){
+                this.assets_is_fetching = false;
+
+                vaah().ajax(
+                    this.ajax_url+'/assets',
+                    this.afterGetAssets,
+                );
+            }
+
+
         },
         afterGetAssets(data, res)
         {
@@ -117,7 +125,7 @@ export const useArticlesStore = defineStore({
                 {
                     this.query.rows = data.rows;
                 }
-                // this.item = vaah().clone(data.empty_item);
+                this.item = vaah().clone(data.empty_item);
             }
         },
         async paginate(event) {
