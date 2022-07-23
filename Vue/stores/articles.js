@@ -417,9 +417,21 @@ export const useArticlesStore = defineStore({
         {
 
         },
-        changeStatus()
+        changeStatus(item)
         {
 
+            let url = this.ajax_url+'/'+item.id;
+
+            let options = {
+                params: item,
+                method: 'put',
+                show_success: false
+            };
+            vaah().ajax(
+                url,
+                this.updateListAfter,
+                options
+            );
         },
         getIdWidth()
         {
