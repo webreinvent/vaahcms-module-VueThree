@@ -3,6 +3,8 @@ import {acceptHMRUpdate, defineStore} from 'pinia'
 import qs from 'qs'
 import {vaah} from '../vaahvue/pinia/vaah'
 
+let model_namespace = 'VaahCms\\Modules\\VueThree\\Models\\Article';
+
 
 let base_url = document.getElementsByTagName('base')[0].getAttribute("href");
 let ajax_url = base_url + "/backend/vuethree/articles";
@@ -29,6 +31,7 @@ export const useArticlesStore = defineStore({
     state: () => ({
         base_url: base_url,
         ajax_url: ajax_url,
+        model: model_namespace,
         app: null,
         assets: null,
         rows_per_page: [10,20,30,50,100,500],
@@ -154,6 +157,38 @@ export const useArticlesStore = defineStore({
                 await this.create();
             }
         },
+
+        //---------------------------------------------------------------------
+        async getFaker () {
+
+            let params = {
+                model_namespace: this.model,
+                except: this.assets.fillable.except,
+            };
+
+            let url = this.base_url+'/faker';
+
+            let options = {
+                params: params,
+                method: 'post',
+            };
+
+            vaah().ajax(
+                url,
+                this.getFakerAfter,
+                options
+            );
+        },
+        //---------------------------------------------------------------------
+        getFakerAfter: function (data, res) {
+            if(data)
+            {
+                let self = this;
+                Object.keys(data.fill).forEach(function(key) {
+                    self.item[key] = data.fill[key];
+                });
+            }
+        },
         async create() {
 
             let options = {
@@ -213,13 +248,23 @@ export const useArticlesStore = defineStore({
             switch (this.form.action)
             {
                 case 'save-and-new':
-                    this.item = vaah().clone(this.assets.empty_item);
+                    this.setActiveItem();
+                    break;
+                case 'save-and-close':
+                    this.setActiveItem();
+                    this.$router.push({name: 'articles.index'});
+                    break;
+                case 'save-and-clone':
                     break;
             }
         },
         onItemSelection(items)
         {
             this.action.items = items;
+        },
+        setActiveItem()
+        {
+            this.item = vaah().clone(this.assets.empty_item);
         },
         async updateList(type){
             if(!type)
