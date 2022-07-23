@@ -123,8 +123,9 @@ const toggleActionsMenu = (event) => {
                     </Button>
 
                     <Menu ref="actions_menu"
-                          :model="actions_menu_items"
-                          :popup="true" />
+                          :model="store.form_menu_list"
+                          :popup="true" >
+                    </Menu>
 
                     <!--end of bulk_actions-->
 
