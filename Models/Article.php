@@ -416,6 +416,9 @@ class Article extends Model
                 case 'restore':
                     $update->restore();
                     break;
+                case 'delete':
+                    $update->forceDelete();
+                    break;
             }
         }
 

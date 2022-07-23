@@ -39,33 +39,26 @@ const actions_menu = ref();
 
 const actions_menu_items = ref([
     {
-        label: 'Save & Close',
-        icon: 'pi pi-check',
+        label: 'Trash',
+        icon: 'pi pi-trash',
         command: () => {
-
+            store.updateItem('trash');
         }
     },
     {
-        label: 'Save & Clone',
-        icon: 'pi pi-copy',
+        label: 'Restore',
+        icon: 'pi pi-trash',
         command: () => {
-
+            store.updateItem('restore');
         }
     },
     {
-        label: 'Reset',
-        icon: 'pi pi-refresh',
+        label: 'Delete',
+        icon: 'pi pi-trash',
         command: () => {
-
+            store.updateItem('delete');
         }
-    },
-    {
-        label: 'Fill',
-        icon: 'pi pi-pencil',
-        command: () => {
-
-        }
-    },
+    }
 ]);
 
 
@@ -129,6 +122,13 @@ const toggleActionsMenu = (event) => {
 
 
             <div v-if="store.item">
+
+                <Message severity="error"
+                         :closable="false"
+                         icon="pi pi-trash"
+                         v-if="store.item.deleted_at">
+                    Deleted {{store.item.deleted_at}}
+                </Message>
 
                 <div class="p-datatable p-component p-datatable-responsive-scroll p-datatable-striped p-datatable-sm">
                 <table class="p-datatable-table">

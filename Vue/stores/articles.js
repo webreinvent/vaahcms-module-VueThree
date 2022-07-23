@@ -24,7 +24,7 @@ let empty_states = {
         type: null,
         items: [],
     }
-}
+};
 
 export const useArticlesStore = defineStore({
     id: 'articles',
@@ -257,6 +257,8 @@ export const useArticlesStore = defineStore({
             if(data)
             {
                 this.item = data;
+            }else{
+                this.$router.push({name: 'articles.index'});
             }
         },
         performFormAction: function ()
@@ -386,7 +388,9 @@ export const useArticlesStore = defineStore({
             });
             let query_object = qs.parse(query_string);
 
-            query_object.filter = vaah().cleanObject(query_object.filter);
+            if(query_object.filter){
+                query_object.filter = vaah().cleanObject(query_object.filter);
+            }
 
             //reset url query string
             await this.$router.replace({query: null});
@@ -494,6 +498,33 @@ export const useArticlesStore = defineStore({
                 this.updateListAfter,
                 options
             );
+        },
+        updateItem(action)
+        {
+
+            this.item['action'] = action;
+
+            let url = this.ajax_url+'/'+this.item.id;
+
+            let options = {
+                params: this.item,
+                method: 'patch'
+            };
+            vaah().ajax(
+                url,
+                this.updateItemAfter,
+                options
+            );
+        },
+        async updateItemAfter(data, res) {
+            if(data)
+            {
+                this.getList();
+                if(this.route.params && this.route.params.id){
+                    this.getItem(this.route.params.id);
+                }
+
+            }
         },
         getIdWidth()
         {
