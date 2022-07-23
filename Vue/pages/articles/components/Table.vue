@@ -10,9 +10,7 @@ const useVaah = vaah();
 
     <div v-if="store.list">
         <!--table-->
-
-        {{ store.action.items }}
-            <DataTable :value="store.list.data"
+         <DataTable :value="store.list.data"
                        dataKey="id"
                    class="p-datatable-sm"
                    v-model:selection="store.action.items"
