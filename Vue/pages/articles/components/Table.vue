@@ -10,7 +10,10 @@ const useVaah = vaah();
 
     <div v-if="store.list">
         <!--table-->
+
+        {{ store.action.items }}
             <DataTable :value="store.list.data"
+                       dataKey="id"
                    class="p-datatable-sm"
                    v-model:selection="store.action.items"
                    stripedRows
@@ -47,8 +50,10 @@ const useVaah = vaah();
 
                 <template #body="prop">
                     <InputSwitch v-model.bool="prop.data.is_active"
+                                 @input="store.changeStatus(prop.data)"
                                  class="p-inputswitch-sm"
-                                 v-bind:false-value="0"  v-bind:true-value="1" />
+                                 v-bind:false-value="0"  v-bind:true-value="1" >
+                    </InputSwitch>
                 </template>
 
             </Column>
@@ -62,15 +67,18 @@ const useVaah = vaah();
 
                         <Button class="p-button-tiny p-button-text"
                                 @click="store.toView(prop.data)"
-                                icon="pi pi-eye"/>
+                                icon="pi pi-eye">
+                        </Button>
 
                         <Button class="p-button-tiny p-button-text"
                                 @click="store.toEdit(prop.data)"
-                                icon="pi pi-pencil"/>
+                                icon="pi pi-pencil">
+                        </Button>
 
                         <Button class="p-button-tiny p-button-danger p-button-text"
                                 v-if="store.isViewLarge()"
-                                icon="pi pi-trash"/>
+                                icon="pi pi-trash">
+                        </Button>
 
                     </div>
 
