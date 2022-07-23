@@ -117,7 +117,7 @@ export const useArticlesStore = defineStore({
                 {
                     this.query.rows = data.rows;
                 }
-                this.item = vaah().clone(data.empty_item);
+                // this.item = vaah().clone(data.empty_item);
             }
         },
         async paginate(event) {
