@@ -24,6 +24,7 @@ onMounted(async () => {
                 && newVal.name === 'articles.view')
             {
                 store.toList();
+
             }
 
             await store.getItem(route.params.id);
@@ -36,30 +37,6 @@ onMounted(async () => {
 
 //--------actions_menu
 const actions_menu = ref();
-
-const actions_menu_items = ref([
-    {
-        label: 'Trash',
-        icon: 'pi pi-trash',
-        command: () => {
-            store.updateItem('trash');
-        }
-    },
-    {
-        label: 'Restore',
-        icon: 'pi pi-trash',
-        command: () => {
-            store.updateItem('restore');
-        }
-    },
-    {
-        label: 'Delete',
-        icon: 'pi pi-trash',
-        command: () => {
-            store.updateItem('delete');
-        }
-    }
-]);
 
 
 const toggleActionsMenu = (event) => {
@@ -104,7 +81,7 @@ const toggleActionsMenu = (event) => {
                     </Button>
 
                     <Menu ref="actions_menu"
-                          :model="actions_menu_items"
+                          :model="store.item_menu_list"
                           :popup="true" />
 
                     <!--end of bulk_actions-->
@@ -128,6 +105,12 @@ const toggleActionsMenu = (event) => {
                          icon="pi pi-trash"
                          v-if="store.item.deleted_at">
                     Deleted {{store.item.deleted_at}}
+
+                    <Button label="Restore"
+                            class="p-button-sm"
+                            @click="store.updateItem('restore')"
+                            >
+                    </Button>
                 </Message>
 
                 <div class="p-datatable p-component p-datatable-responsive-scroll p-datatable-striped p-datatable-sm">
