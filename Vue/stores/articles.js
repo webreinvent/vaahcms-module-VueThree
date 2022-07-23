@@ -66,6 +66,47 @@ export const useArticlesStore = defineStore({
                     this.updateItem('delete');
                 }
             }
+        ],
+        form_menu_list: [
+            {
+                label: 'Save & Close',
+                icon: 'pi pi-check',
+                command: () => {
+                    this.form.action = 'save-and-close';
+                    if(this.item && this.item.id){
+                        this.store();
+                    }else{
+                        this.create();
+                    }
+
+                }
+            },
+            {
+                label: 'Save & Clone',
+                icon: 'pi pi-copy',
+                command: () => {
+                    this.form.action = 'save-and-clone';
+                    if(this.item && this.item.id){
+                        this.store();
+                    }else{
+                        this.create();
+                    }
+                }
+            },
+            {
+                label: 'Reset',
+                icon: 'pi pi-refresh',
+                command: () => {
+                    this.setActiveItem();
+                }
+            },
+            {
+                label: 'Fill',
+                icon: 'pi pi-pencil',
+                command: () => {
+                    this.getFaker();
+                }
+            },
         ]
     }),
     getters: {
@@ -270,6 +311,7 @@ export const useArticlesStore = defineStore({
                 this.$router.push({name: 'articles.index'});
             }
             this.getItemMenu();
+            this.getFormMenu();
         },
         performFormAction: function ()
         {
@@ -628,6 +670,89 @@ export const useArticlesStore = defineStore({
 
 
             return this.item_menu_list;
+        },
+        getFormMenu()
+        {
+
+            if(this.item && this.item.id)
+            {
+
+                let save_close = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Save & Close');
+
+                if(save_close)
+                {
+                    this.form_menu_list = vaah().removeInArrayByKey(this.form_menu_list, save_close, 'label');
+                }
+
+                let save_clone = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Save & Clone');
+
+                if(save_clone)
+                {
+                    this.form_menu_list = vaah().removeInArrayByKey(this.form_menu_list, save_clone, 'label');
+                }
+
+                let reset_menu = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Reset');
+
+                if(reset_menu)
+                {
+                    this.form_menu_list = vaah().removeInArrayByKey(this.form_menu_list, reset_menu, 'label');
+                }
+
+
+            }else{
+                let save_close = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Save & Close');
+
+
+                if(!save_close){
+                    this.form_menu_list.push({
+                        label: 'Save & Close',
+                        icon: 'pi pi-check',
+                        command: () => {
+                            this.form.action = 'save-and-close';
+                            if(this.item && this.item.id){
+                                this.store();
+                            }else{
+                                this.create();
+                            }
+
+                        }
+                    },);
+                }
+
+                let save_clone = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Save & Clone');
+
+
+                if(!save_clone){
+                    this.form_menu_list.push({
+                        label: 'Save & Clone',
+                        icon: 'pi pi-copy',
+                        command: () => {
+                            this.form.action = 'save-and-clone';
+                            if(this.item && this.item.id){
+                                this.store();
+                            }else{
+                                this.create();
+                            }
+                        }
+                    });
+                }
+
+                let reset_menu = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Reset');
+
+
+                if(!reset_menu){
+                    this.form_menu_list.push({
+                        label: 'Reset',
+                        icon: 'pi pi-refresh',
+                        command: () => {
+                            this.setActiveItem();
+                        }
+                    });
+                }
+            }
+
+
+            return this.form_menu_list;
         },
     }
 });
