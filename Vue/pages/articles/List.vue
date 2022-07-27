@@ -9,10 +9,14 @@ import Table from "./components/Table.vue";
 const store = useArticlesStore();
 const route = useRoute();
 
+import { useConfirm } from "primevue/useconfirm";
+const confirm = useConfirm();
+
 
 onMounted(async () => {
     await store.onLoad(route);
     await store.watchRoutes(route);
+    await store.setConfirmDialog(confirm);
     await store.watchStates();
     await store.getAssets();
     await store.getList();

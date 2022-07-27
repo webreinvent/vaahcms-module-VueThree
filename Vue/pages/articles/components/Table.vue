@@ -74,6 +74,7 @@ const useVaah = vaah();
                         </Button>
 
                         <Button class="p-button-tiny p-button-danger p-button-text"
+                                @click="store.confirmDelete(prop.data)"
                                 v-if="store.isViewLarge()"
                                 icon="pi pi-trash">
                         </Button>

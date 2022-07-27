@@ -34,6 +34,7 @@ export const useArticlesStore = defineStore({
         model: model_namespace,
         assets_is_fetching: true,
         app: null,
+        confirm_dialog: null,
         assets: null,
         rows_per_page: [10,20,30,50,100,500],
         list: null,
@@ -119,6 +120,10 @@ export const useArticlesStore = defineStore({
             this.route = route;
             this.setViewAndWidth(route.name);
             this.updateQueryFromUrl(route);
+        },
+        setConfirmDialog: function (prime_confirm)
+        {
+            this.confirm_dialog = prime_confirm;
         },
         watchStates()
         {
@@ -407,7 +412,7 @@ export const useArticlesStore = defineStore({
                 await this.getList();
             }
         },
-        confirmDelete()
+        confirmDelete(item)
         {
             if(this.action.items.length < 1)
             {
