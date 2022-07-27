@@ -14,12 +14,9 @@ onMounted(async () => {
     {
         await store.getItem(route.params.id);
 
-        watch(route, async (newVal,oldVal) =>
-            {
-                await store.getItem(route.params.id);
-            }, { deep: true }
-        )
     }
+
+    store.getFormMenu();
 });
 
 //--------actions_menu

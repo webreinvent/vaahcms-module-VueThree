@@ -59,56 +59,8 @@ export const useArticlesStore = defineStore({
         },
         is_list_loading: null,
         count_filters: 0,
-        item_menu_list: [
-            {
-                label: 'Delete',
-                icon: 'pi pi-trash',
-                command: () => {
-                    this.updateItem('delete');
-                }
-            }
-        ],
-        form_menu_list: [
-            {
-                label: 'Save & Close',
-                icon: 'pi pi-check',
-                command: () => {
-                    this.form.action = 'save-and-close';
-                    if(this.item && this.item.id){
-                        this.store();
-                    }else{
-                        this.create();
-                    }
-
-                }
-            },
-            {
-                label: 'Save & Clone',
-                icon: 'pi pi-copy',
-                command: () => {
-                    this.form.action = 'save-and-clone';
-                    if(this.item && this.item.id){
-                        this.store();
-                    }else{
-                        this.create();
-                    }
-                }
-            },
-            {
-                label: 'Reset',
-                icon: 'pi pi-refresh',
-                command: () => {
-                    this.setActiveItem();
-                }
-            },
-            {
-                label: 'Fill',
-                icon: 'pi pi-pencil',
-                command: () => {
-                    this.getFaker();
-                }
-            },
-        ]
+        item_menu_list: [],
+        form_menu_list: []
     }),
     getters: {
 
@@ -139,6 +91,9 @@ export const useArticlesStore = defineStore({
             watch(route, (newVal,oldVal) =>
                 {
                     this.route = newVal;
+                    if(newVal.params.id){
+                        this.getItem(newVal.params.id);
+                    }
                     this.setViewAndWidth(newVal.name);
                 }, { deep: true }
             )
@@ -516,6 +471,7 @@ export const useArticlesStore = defineStore({
         toForm()
         {
             this.item = vaah().clone(this.assets.empty_item);
+            this.getFormMenu();
             this.$router.push({name: 'articles.form'})
         },
         toView(item)
@@ -619,29 +575,18 @@ export const useArticlesStore = defineStore({
         getItemMenu()
         {
 
+            let item_menu = [];
+
             if(this.item && this.item.deleted_at)
             {
 
-                let restore_menu = vaah().findInArrayByKey(this.item_menu_list, 'label', 'Restore');
-
-
-                if(!restore_menu){
-                    this.item_menu_list.push({
-                        label: 'Restore',
-                        icon: 'pi pi-refresh',
-                        command: () => {
-                            this.updateItem('restore');
-                        }
-                    });
-                }
-
-
-                let trash_menu = vaah().findInArrayByKey(this.item_menu_list, 'label', 'Trash');
-
-                if(trash_menu)
-                {
-                    this.item_menu_list = vaah().removeInArrayByKey(this.item_menu_list, trash_menu, 'label');
-                }
+                item_menu.push({
+                    label: 'Restore',
+                    icon: 'pi pi-refresh',
+                    command: () => {
+                        this.updateItem('restore');
+                    }
+                });
 
 
             }
@@ -649,115 +594,84 @@ export const useArticlesStore = defineStore({
             if(this.item && this.item.id && !this.item.deleted_at)
             {
 
-                let trash_menu = vaah().findInArrayByKey(this.item_menu_list, 'label', 'Trash');
-
-
-                if(!trash_menu){
-                    this.item_menu_list.push({
-                        label: 'Trash',
-                        icon: 'pi pi-exclamation-triangle',
-                        command: () => {
-                            this.updateItem('trash');
-                        }
-                    });
-                }
-
-
-                let restore_menu = vaah().findInArrayByKey(this.item_menu_list, 'label', 'Restore');
-
-                if(restore_menu)
-                {
-                    this.item_menu_list = vaah().removeInArrayByKey(this.item_menu_list, restore_menu, 'label');
-                }
+                item_menu.push({
+                    label: 'Trash',
+                    icon: 'pi pi-exclamation-triangle',
+                    command: () => {
+                        this.updateItem('trash');
+                    }
+                });
 
 
             }
 
+            item_menu.push({
+                label: 'Delete',
+                icon: 'pi pi-trash',
+                command: () => {
+                    this.updateItem('delete');
+                }
+            });
 
-            return this.item_menu_list;
+
+            this.item_menu_list = item_menu;
         },
         getFormMenu()
         {
 
-            if(this.item && this.item.id)
+            let form_menu = [];
+
+            if(!this.item || !this.item.id)
             {
 
-                let save_close = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Save & Close');
-
-                if(save_close)
-                {
-                    this.form_menu_list = vaah().removeInArrayByKey(this.form_menu_list, save_close, 'label');
-                }
-
-                let save_clone = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Save & Clone');
-
-                if(save_clone)
-                {
-                    this.form_menu_list = vaah().removeInArrayByKey(this.form_menu_list, save_clone, 'label');
-                }
-
-                let reset_menu = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Reset');
-
-                if(reset_menu)
-                {
-                    this.form_menu_list = vaah().removeInArrayByKey(this.form_menu_list, reset_menu, 'label');
-                }
-
-
-            }else{
-                let save_close = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Save & Close');
-
-
-                if(!save_close){
-                    this.form_menu_list.push({
-                        label: 'Save & Close',
-                        icon: 'pi pi-check',
-                        command: () => {
-                            this.form.action = 'save-and-close';
-                            if(this.item && this.item.id){
-                                this.store();
-                            }else{
-                                this.create();
-                            }
-
+                form_menu.push({
+                    label: 'Save & Close',
+                    icon: 'pi pi-check',
+                    command: () => {
+                        this.form.action = 'save-and-close';
+                        if(this.item && this.item.id){
+                            this.store();
+                        }else{
+                            this.create();
                         }
-                    },);
-                }
 
-                let save_clone = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Save & Clone');
+                    }
+                },);
 
-
-                if(!save_clone){
-                    this.form_menu_list.push({
-                        label: 'Save & Clone',
-                        icon: 'pi pi-copy',
-                        command: () => {
-                            this.form.action = 'save-and-clone';
-                            if(this.item && this.item.id){
-                                this.store();
-                            }else{
-                                this.create();
-                            }
+                form_menu.push({
+                    label: 'Save & Clone',
+                    icon: 'pi pi-copy',
+                    command: () => {
+                        this.form.action = 'save-and-clone';
+                        if(this.item && this.item.id){
+                            this.store();
+                        }else{
+                            this.create();
                         }
-                    });
-                }
-
-                let reset_menu = vaah().findInArrayByKey(this.form_menu_list, 'label', 'Reset');
+                    }
+                });
 
 
-                if(!reset_menu){
-                    this.form_menu_list.push({
-                        label: 'Reset',
-                        icon: 'pi pi-refresh',
-                        command: () => {
-                            this.setActiveItem();
-                        }
-                    });
-                }
+                form_menu.push({
+                    label: 'Reset',
+                    icon: 'pi pi-refresh',
+                    command: () => {
+                        this.setActiveItem();
+                    }
+                });
+
+
             }
 
+            form_menu.push({
+                label: 'Fill',
+                icon: 'pi pi-pencil',
+                command: () => {
+                    this.getFaker();
+                }
+            });
 
-            return this.form_menu_list;
+            this.form_menu_list = form_menu;
         },
     }
 });
