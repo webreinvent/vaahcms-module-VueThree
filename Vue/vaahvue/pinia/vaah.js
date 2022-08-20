@@ -7,6 +7,7 @@ export const vaah = defineStore({
     id: 'vaah',
     state: () => ({
         toast: null,
+        confirm: null,
         show_progress_bar: false,
     }),
     getters: {},
@@ -199,6 +200,11 @@ export const vaah = defineStore({
             this.toast = prime_toast;
         },
         //----------------------------------------------------------
+        setConfirm: function (prime_confirm)
+        {
+            this.confirm = prime_confirm;
+        },
+        //----------------------------------------------------------
         toastSuccess(messages){
             let data = this.getMessageAndDuration(messages);
             if(data && data.html !== "")
@@ -222,6 +228,30 @@ export const vaah = defineStore({
                     life: data.duration
                 });
             }
+        },
+        //----------------------------------------------------------
+        confirmDialog(heading, message, callbackOnAccept, callbackOnReject=null, acceptClass='p-button-danger', icon='pi pi-info-circle')
+        {
+            this.confirm.require({
+                header: heading,
+                message: message,
+                icon: icon,
+                acceptClass: acceptClass,
+                accept: () => {
+                    callbackOnAccept();
+                },
+                reject: () => {
+                    if(callbackOnReject)
+                    {
+                        callbackOnReject();
+                    }
+                }
+            });
+        },
+        //----------------------------------------------------------
+        confirmDialogDelete(callbackOnAccept)
+        {
+            this.confirmDialog('Delete Confirmation', 'Do you want to delete this record?', callbackOnAccept);
         },
         //----------------------------------------------------------
         clone: function (source)

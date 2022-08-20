@@ -49,7 +49,8 @@ const selected_actions_menu_items = ref([
         label: 'Delete',
         icon: 'pi pi-trash',
         command: () => {
-            store.updateList('delete')
+            store.confirmDelete()
+            //store.updateList('delete')
         }
     },
     ]);
