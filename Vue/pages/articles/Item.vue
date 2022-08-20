@@ -9,15 +9,24 @@ const route = useRoute();
 
 onMounted(async () => {
 
+    /**
+     * If record id is not set in url
+     */
     if(route.params && !route.params.id)
     {
         store.toList();
-
         return false;
     }
 
+    /**
+     * Fetch the record from the database
+     */
     await store.getItem(route.params.id);
 
+    /**
+     * Watch if url record id is changed, if changed
+     * then fetch the new record from database
+     */
     watch(route, async (newVal,oldVal) =>
         {
             if(newVal.params && !newVal.params.id
@@ -26,10 +35,7 @@ onMounted(async () => {
                 store.toList();
 
             }
-
             await store.getItem(route.params.id);
-
-
         }, { deep: true }
     )
 
@@ -37,8 +43,6 @@ onMounted(async () => {
 
 //--------actions_menu
 const actions_menu = ref();
-
-
 const toggleActionsMenu = (event) => {
     actions_menu.value.toggle(event);
 };
@@ -83,7 +87,6 @@ const toggleActionsMenu = (event) => {
                     <Menu ref="actions_menu"
                           :model="store.item_menu_list"
                           :popup="true" />
-
                     <!--end of bulk_actions-->
 
 
@@ -101,16 +104,26 @@ const toggleActionsMenu = (event) => {
             <div v-if="store.item">
 
                 <Message severity="error"
+                         class="p-container-message"
                          :closable="false"
                          icon="pi pi-trash"
                          v-if="store.item.deleted_at">
-                    Deleted {{store.item.deleted_at}}
 
-                    <Button label="Restore"
-                            class="p-button-sm"
-                            @click="store.updateItem('restore')"
-                            >
-                    </Button>
+                    <div class="flex align-items-center justify-content-between">
+
+                        <div class="">
+                            Deleted {{store.item.deleted_at}}
+                        </div>
+
+                        <div class="">
+                            <Button label="Restore"
+                                    class="p-button-sm"
+                                    @click="store.updateItem('restore')">
+                            </Button>
+                        </div>
+
+                    </div>
+
                 </Message>
 
                 <div class="p-datatable p-component p-datatable-responsive-scroll p-datatable-striped p-datatable-sm">
