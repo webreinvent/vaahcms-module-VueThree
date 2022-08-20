@@ -108,7 +108,7 @@ class Article extends Model
         $inputs = $request->all();
 
         $validation = self::validation($inputs);
-        if (isset($validation['failed'])) {
+        if (!$validation['success']) {
             return $validation;
         }
 
@@ -288,6 +288,9 @@ class Article extends Model
             case 'restore':
                 self::whereIn('id', $items_id)->restore();
                 break;
+            case 'delete':
+                self::whereIn('id', $items_id)->forceDelete();
+                break;
             case 'activate-all':
                 self::whereNull('is_active')->update(['is_active' => 1]);
                 break;
@@ -413,6 +416,9 @@ class Article extends Model
                 case 'restore':
                     $update->restore();
                     break;
+                case 'delete':
+                    $update->forceDelete();
+                    break;
             }
         }
 
@@ -458,7 +464,7 @@ class Article extends Model
         if ($validator->fails()) {
             $messages = $validator->errors();
             $response['success'] = false;
-            $response['messages'] = $messages;
+            $response['messages'] = $messages->all();
             return $response;
         }
 

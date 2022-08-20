@@ -8,16 +8,28 @@ const store = useArticlesStore();
 const route = useRoute();
 
 onMounted(async () => {
+
     if(route.params && !route.params.id)
     {
         store.toList();
+
+        return false;
     }
 
     await store.getItem(route.params.id);
 
     watch(route, async (newVal,oldVal) =>
         {
+            if(newVal.params && !newVal.params.id
+                && newVal.name === 'articles.view')
+            {
+                store.toList();
+
+            }
+
             await store.getItem(route.params.id);
+
+
         }, { deep: true }
     )
 
@@ -25,37 +37,6 @@ onMounted(async () => {
 
 //--------actions_menu
 const actions_menu = ref();
-
-const actions_menu_items = ref([
-    {
-        label: 'Save & Close',
-        icon: 'pi pi-check',
-        command: () => {
-
-        }
-    },
-    {
-        label: 'Save & Clone',
-        icon: 'pi pi-copy',
-        command: () => {
-
-        }
-    },
-    {
-        label: 'Reset',
-        icon: 'pi pi-refresh',
-        command: () => {
-
-        }
-    },
-    {
-        label: 'Fill',
-        icon: 'pi pi-pencil',
-        command: () => {
-
-        }
-    },
-]);
 
 
 const toggleActionsMenu = (event) => {
@@ -100,7 +81,7 @@ const toggleActionsMenu = (event) => {
                     </Button>
 
                     <Menu ref="actions_menu"
-                          :model="actions_menu_items"
+                          :model="store.item_menu_list"
                           :popup="true" />
 
                     <!--end of bulk_actions-->
@@ -118,6 +99,19 @@ const toggleActionsMenu = (event) => {
 
 
             <div v-if="store.item">
+
+                <Message severity="error"
+                         :closable="false"
+                         icon="pi pi-trash"
+                         v-if="store.item.deleted_at">
+                    Deleted {{store.item.deleted_at}}
+
+                    <Button label="Restore"
+                            class="p-button-sm"
+                            @click="store.updateItem('restore')"
+                            >
+                    </Button>
+                </Message>
 
                 <div class="p-datatable p-component p-datatable-responsive-scroll p-datatable-striped p-datatable-sm">
                 <table class="p-datatable-table">

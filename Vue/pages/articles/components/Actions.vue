@@ -191,6 +191,13 @@ const selectedCity1 = ref();
                         <Button
                             type="button"
                             class="p-button-sm"
+                            @click="store.resetQuery()">
+                            Reset
+                        </Button>
+
+                        <Button
+                            type="button"
+                            class="p-button-sm"
                             @click="store.show_filters = true">
                             Filters
                             <Badge v-if="store.count_filters > 0" :value="store.count_filters"></Badge>

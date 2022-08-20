@@ -9,16 +9,14 @@ const store = useArticlesStore();
 const route = useRoute();
 
 onMounted(async () => {
+
     if(route.params && route.params.id)
     {
         await store.getItem(route.params.id);
 
-        watch(route, async (newVal,oldVal) =>
-            {
-                await store.getItem(route.params.id);
-            }, { deep: true }
-        )
     }
+
+    store.getFormMenu();
 });
 
 //--------actions_menu
@@ -29,6 +27,12 @@ const actions_menu_items = ref([
         label: 'Save & Close',
         icon: 'pi pi-check',
         command: () => {
+            store.form.action = 'save-and-close';
+            if(store.item && store.item.id){
+                store.store();
+            }else{
+                store.create();
+            }
 
         }
     },
@@ -36,21 +40,26 @@ const actions_menu_items = ref([
         label: 'Save & Clone',
         icon: 'pi pi-copy',
         command: () => {
-
+            store.form.action = 'save-and-clone';
+            if(store.item && store.item.id){
+                store.store();
+            }else{
+                store.create();
+            }
         }
     },
     {
         label: 'Reset',
         icon: 'pi pi-refresh',
         command: () => {
-
+            store.setActiveItem();
         }
     },
     {
         label: 'Fill',
         icon: 'pi pi-pencil',
         command: () => {
-
+            store.getFaker();
         }
     },
 ]);
@@ -111,8 +120,9 @@ const toggleActionsMenu = (event) => {
                     </Button>
 
                     <Menu ref="actions_menu"
-                          :model="actions_menu_items"
-                          :popup="true" />
+                          :model="store.form_menu_list"
+                          :popup="true" >
+                    </Menu>
 
                     <!--end of bulk_actions-->
 

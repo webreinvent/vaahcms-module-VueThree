@@ -3,6 +3,8 @@ import {acceptHMRUpdate, defineStore} from 'pinia'
 import qs from 'qs'
 import {vaah} from '../vaahvue/pinia/vaah'
 
+let model_namespace = 'VaahCms\\Modules\\VueThree\\Models\\Article';
+
 
 let base_url = document.getElementsByTagName('base')[0].getAttribute("href");
 let ajax_url = base_url + "/backend/vuethree/articles";
@@ -22,14 +24,17 @@ let empty_states = {
         type: null,
         items: [],
     }
-}
+};
 
 export const useArticlesStore = defineStore({
     id: 'articles',
     state: () => ({
         base_url: base_url,
         ajax_url: ajax_url,
+        model: model_namespace,
+        assets_is_fetching: true,
         app: null,
+        confirm_dialog: null,
         assets: null,
         rows_per_page: [10,20,30,50,100,500],
         list: null,
@@ -54,6 +59,8 @@ export const useArticlesStore = defineStore({
         },
         is_list_loading: null,
         count_filters: 0,
+        item_menu_list: [],
+        form_menu_list: []
     }),
     getters: {
 
@@ -65,6 +72,10 @@ export const useArticlesStore = defineStore({
             this.route = route;
             this.setViewAndWidth(route.name);
             this.updateQueryFromUrl(route);
+        },
+        setConfirmDialog: function (prime_confirm)
+        {
+            this.confirm_dialog = prime_confirm;
         },
         watchStates()
         {
@@ -80,6 +91,9 @@ export const useArticlesStore = defineStore({
             watch(route, (newVal,oldVal) =>
                 {
                     this.route = newVal;
+                    if(newVal.params.id){
+                        this.getItem(newVal.params.id);
+                    }
                     this.setViewAndWidth(newVal.name);
                 }, { deep: true }
             )
@@ -100,10 +114,17 @@ export const useArticlesStore = defineStore({
             }
         },
         async getAssets() {
-            vaah().ajax(
-                this.ajax_url+'/assets',
-                this.afterGetAssets,
-            );
+
+            if(this.assets_is_fetching === true){
+                this.assets_is_fetching = false;
+
+                vaah().ajax(
+                    this.ajax_url+'/assets',
+                    this.afterGetAssets,
+                );
+            }
+
+
         },
         afterGetAssets(data, res)
         {
@@ -114,7 +135,11 @@ export const useArticlesStore = defineStore({
                 {
                     this.query.rows = data.rows;
                 }
-                this.item = vaah().clone(data.empty_item);
+
+                if(this.route.params && !this.route.params.id){
+                    this.item = vaah().clone(data.empty_item);
+                }
+
             }
         },
         async paginate(event) {
@@ -124,7 +149,7 @@ export const useArticlesStore = defineStore({
         async getList() {
             let options = {
                 query: vaah().clone(this.query)
-            }
+            };
 
             await vaah().ajax(
                 this.ajax_url,
@@ -152,6 +177,38 @@ export const useArticlesStore = defineStore({
                 await this.store();
             } else{
                 await this.create();
+            }
+        },
+
+        //---------------------------------------------------------------------
+        async getFaker () {
+
+            let params = {
+                model_namespace: this.model,
+                except: this.assets.fillable.except,
+            };
+
+            let url = this.base_url+'/faker';
+
+            let options = {
+                params: params,
+                method: 'post',
+            };
+
+            vaah().ajax(
+                url,
+                this.getFakerAfter,
+                options
+            );
+        },
+        //---------------------------------------------------------------------
+        getFakerAfter: function (data, res) {
+            if(data)
+            {
+                let self = this;
+                Object.keys(data.fill).forEach(function(key) {
+                    self.item[key] = data.fill[key];
+                });
             }
         },
         async create() {
@@ -196,30 +253,48 @@ export const useArticlesStore = defineStore({
             }
         },
         async getItem(id) {
-            vaah().ajax(
-                ajax_url+'/'+id,
-                this.getItemAfter
-            );
+
+            if(id){
+                vaah().ajax(
+                    ajax_url+'/'+id,
+                    this.getItemAfter
+                );
+            }
+
         },
         getItemAfter(data, res)
         {
             if(data)
             {
                 this.item = data;
+            }else{
+                this.$router.push({name: 'articles.index'});
             }
+            this.getItemMenu();
+            this.getFormMenu();
         },
         performFormAction: function ()
         {
             switch (this.form.action)
             {
                 case 'save-and-new':
-                    this.item = vaah().clone(this.assets.empty_item);
+                    this.setActiveItem();
+                    break;
+                case 'save-and-close':
+                    this.setActiveItem();
+                    this.$router.push({name: 'articles.index'});
+                    break;
+                case 'save-and-clone':
                     break;
             }
         },
         onItemSelection(items)
         {
             this.action.items = items;
+        },
+        setActiveItem()
+        {
+            this.item = vaah().clone(this.assets.empty_item);
         },
         async updateList(type){
             if(!type)
@@ -292,7 +367,7 @@ export const useArticlesStore = defineStore({
                 await this.getList();
             }
         },
-        confirmDelete()
+        confirmDelete(item)
         {
             if(this.action.items.length < 1)
             {
@@ -325,7 +400,9 @@ export const useArticlesStore = defineStore({
             });
             let query_object = qs.parse(query_string);
 
-            query_object.filter = vaah().cleanObject(query_object.filter);
+            if(query_object.filter){
+                query_object.filter = vaah().cleanObject(query_object.filter);
+            }
 
             //reset url query string
             await this.$router.replace({query: null});
@@ -394,10 +471,12 @@ export const useArticlesStore = defineStore({
         toForm()
         {
             this.item = vaah().clone(this.assets.empty_item);
+            this.getFormMenu();
             this.$router.push({name: 'articles.form'})
         },
         toView(item)
         {
+            this.item = vaah().clone(item);
             this.$router.push({name: 'articles.view', params:{id:item.id}})
         },
         toEdit(item)
@@ -417,9 +496,49 @@ export const useArticlesStore = defineStore({
         {
 
         },
-        changeStatus()
+        changeStatus(item)
         {
 
+            let url = this.ajax_url+'/'+item.id;
+
+            let options = {
+                params: item,
+                method: 'put',
+                show_success: false
+            };
+            vaah().ajax(
+                url,
+                this.updateListAfter,
+                options
+            );
+        },
+        updateItem(action)
+        {
+
+            this.item['action'] = action;
+
+            let url = this.ajax_url+'/'+this.item.id;
+
+            let options = {
+                params: this.item,
+                method: 'patch'
+            };
+            vaah().ajax(
+                url,
+                this.updateItemAfter,
+                options
+            );
+        },
+        async updateItemAfter(data, res) {
+            if(data)
+            {
+                this.getList();
+                if(this.route.params && this.route.params.id){
+                    this.getItem(this.route.params.id);
+
+                }
+
+            }
         },
         getIdWidth()
         {
@@ -453,8 +572,109 @@ export const useArticlesStore = defineStore({
 
             return text;
         },
+        getItemMenu()
+        {
+
+            let item_menu = [];
+
+            if(this.item && this.item.deleted_at)
+            {
+
+                item_menu.push({
+                    label: 'Restore',
+                    icon: 'pi pi-refresh',
+                    command: () => {
+                        this.updateItem('restore');
+                    }
+                });
+
+
+            }
+
+            if(this.item && this.item.id && !this.item.deleted_at)
+            {
+
+                item_menu.push({
+                    label: 'Trash',
+                    icon: 'pi pi-exclamation-triangle',
+                    command: () => {
+                        this.updateItem('trash');
+                    }
+                });
+
+
+            }
+
+            item_menu.push({
+                label: 'Delete',
+                icon: 'pi pi-trash',
+                command: () => {
+                    this.updateItem('delete');
+                }
+            });
+
+
+            this.item_menu_list = item_menu;
+        },
+        getFormMenu()
+        {
+
+            let form_menu = [];
+
+            if(!this.item || !this.item.id)
+            {
+
+                form_menu.push({
+                    label: 'Save & Close',
+                    icon: 'pi pi-check',
+                    command: () => {
+                        this.form.action = 'save-and-close';
+                        if(this.item && this.item.id){
+                            this.store();
+                        }else{
+                            this.create();
+                        }
+
+                    }
+                },);
+
+                form_menu.push({
+                    label: 'Save & Clone',
+                    icon: 'pi pi-copy',
+                    command: () => {
+                        this.form.action = 'save-and-clone';
+                        if(this.item && this.item.id){
+                            this.store();
+                        }else{
+                            this.create();
+                        }
+                    }
+                });
+
+
+                form_menu.push({
+                    label: 'Reset',
+                    icon: 'pi pi-refresh',
+                    command: () => {
+                        this.setActiveItem();
+                    }
+                });
+
+
+            }
+
+            form_menu.push({
+                label: 'Fill',
+                icon: 'pi pi-pencil',
+                command: () => {
+                    this.getFaker();
+                }
+            });
+
+            this.form_menu_list = form_menu;
+        },
     }
-})
+});
 
 
 
