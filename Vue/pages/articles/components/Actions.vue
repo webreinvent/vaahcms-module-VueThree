@@ -185,16 +185,7 @@ const selectedCity1 = ref();
                                    @keyup.enter.native="store.delayedSearch()"
                                    @keyup.13="store.delayedSearch()"
                                    placeholder="Search"/>
-
                         <Button @click="store.delayedSearch()" icon="pi pi-search"/>
-
-                        <Button
-                            type="button"
-                            class="p-button-sm"
-                            @click="store.resetQuery()">
-                            Reset
-                        </Button>
-
                         <Button
                             type="button"
                             class="p-button-sm"
@@ -203,7 +194,12 @@ const selectedCity1 = ref();
                             <Badge v-if="store.count_filters > 0" :value="store.count_filters"></Badge>
                         </Button>
 
-
+                        <Button
+                            type="button"
+                            icon="pi pi-filter-slash"
+                            class="p-button-sm"
+                            label="Reset"
+                            @click="store.resetQuery()" />
 
                     </div>
                 </div>
