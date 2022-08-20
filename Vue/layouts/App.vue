@@ -3,11 +3,15 @@ import {vaah} from '../vaahvue/pinia/vaah.js'
 import {useRootStore} from '../stores/root.js'
 
 import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
+
 const toast = useToast();
+const confirm = useConfirm();
 const useVaah = vaah();
 const root = useRootStore();
 
 useVaah.setToast(toast);
+useVaah.setConfirm(confirm);
 </script>
 
 
@@ -17,6 +21,7 @@ useVaah.setToast(toast);
                      v-if="useVaah.show_progress_bar"
                      mode="indeterminate"/>
         <Toast class="p-container-toasts" position="top-center" />
+        <ConfirmDialog class="p-container-confirm-dialog"/>
         <RouterView />
     </div>
 </template>

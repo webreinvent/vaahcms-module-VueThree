@@ -30,7 +30,7 @@ onMounted(async () => {
 
                     <div class="flex flex-row">
                         <div >
-                            Articles
+                            <b class="mr-1">Articles</b>
                             <Badge v-if="store.list && store.list.total > 0"
                                    :value="store.list.total">
                             </Badge>

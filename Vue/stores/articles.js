@@ -181,7 +181,6 @@ export const useArticlesStore = defineStore({
                 params: this.item,
                 method: 'put',
             };
-
             vaah().ajax(
                 ajax_url+'/'+this.item.id,
                 this.storeAfter,
@@ -246,6 +245,24 @@ export const useArticlesStore = defineStore({
                 options
             );
         },
+        async deleteList(){
+            this.action.type = 'delete';
+            if(this.action.items.length < 1)
+            {
+                vaah().toastErrors(['Select records']);
+                return false;
+            }
+            let options = {
+                params: this.action,
+                method: 'delete',
+                show_success: false
+            };
+            vaah().ajax(
+                this.ajax_url,
+                this.updateListAfter,
+                options
+            );
+        },
         async bulkUpdateList(type){
 
             if(!type)
@@ -277,26 +294,15 @@ export const useArticlesStore = defineStore({
         },
         confirmDelete()
         {
-
             if(this.action.items.length < 1)
             {
                 vaah().toastErrors(['Select a record']);
                 return false;
             }
-
-            let self = this;
-            this.$buefy.dialog.confirm({
-                title: 'Deleting record',
-                message: 'Are you sure you want to <b>delete</b> the records? This action cannot be undone.',
-                confirmText: 'Delete',
-                type: 'is-danger',
-                hasIcon: true,
-                onConfirm: function () {
-                    self.deleteList('delete');
-                }
-            })
+            vaah().confirmDialogDelete(this.deleteList);
 
         },
+
         async delayedSearch()
         {
             let self = this;
@@ -374,16 +380,7 @@ export const useArticlesStore = defineStore({
             {
                 this.query.filter[key] = null;
             }
-
             await this.updateUrlQueryString(this.query);
-        },
-        resetNewItem()
-        {
-
-        },
-        backToView()
-        {
-
         },
         closeForm()
         {
@@ -444,7 +441,6 @@ export const useArticlesStore = defineStore({
             {
                 width = 80;
             }
-
             return width+'px';
         },
         getActionLabel()
