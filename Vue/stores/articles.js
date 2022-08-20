@@ -320,24 +320,6 @@ export const useArticlesStore = defineStore({
                 options
             );
         },
-        async deleteList(){
-            this.action.type = 'delete';
-            if(this.action.items.length < 1)
-            {
-                vaah().toastErrors(['Select records']);
-                return false;
-            }
-            let options = {
-                params: this.action,
-                method: 'delete',
-                show_success: false
-            };
-            vaah().ajax(
-                this.ajax_url,
-                this.updateListAfter,
-                options
-            );
-        },
         async bulkUpdateList(type){
 
             if(!type)
@@ -367,7 +349,7 @@ export const useArticlesStore = defineStore({
                 await this.getList();
             }
         },
-        confirmDelete(item)
+        confirmDelete()
         {
             if(this.action.items.length < 1)
             {
@@ -375,9 +357,43 @@ export const useArticlesStore = defineStore({
                 return false;
             }
             vaah().confirmDialogDelete(this.deleteList);
-
         },
-
+        async deleteList(){
+            this.action.type = 'delete';
+            if(this.action.items.length < 1)
+            {
+                vaah().toastErrors(['Select records']);
+                return false;
+            }
+            let options = {
+                params: this.action,
+                method: 'delete',
+                show_success: false
+            };
+            vaah().ajax(
+                this.ajax_url,
+                this.updateListAfter,
+                options
+            );
+        },
+        async deleteItem(item){
+            let params = {
+                type: 'trash',
+                items: [
+                    item
+                ]
+            }
+            let options = {
+                params: params,
+                method: 'put',
+                show_success: false
+            };
+            vaah().ajax(
+                this.ajax_url,
+                this.updateListAfter,
+                options
+            );
+        },
         async delayedSearch()
         {
             let self = this;
@@ -514,11 +530,8 @@ export const useArticlesStore = defineStore({
         },
         updateItem(action)
         {
-
             this.item['action'] = action;
-
             let url = this.ajax_url+'/'+this.item.id;
-
             let options = {
                 params: this.item,
                 method: 'patch'
