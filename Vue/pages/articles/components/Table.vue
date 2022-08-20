@@ -27,6 +27,14 @@ const useVaah = vaah();
 
             <Column field="name" header="Name"
                     :sortable="true">
+
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at"
+                           value="Trashed"
+                           severity="danger"></Badge>
+                    {{prop.data.name}}
+                </template>
+
             </Column>
 
 
@@ -64,18 +72,21 @@ const useVaah = vaah();
                     <div class="p-inputgroup ">
 
                         <Button class="p-button-tiny p-button-text"
+                                v-tooltip.top="'View'"
                                 @click="store.toView(prop.data)"
                                 icon="pi pi-eye">
                         </Button>
 
                         <Button class="p-button-tiny p-button-text"
+                                v-tooltip.top="'Update'"
                                 @click="store.toEdit(prop.data)"
                                 icon="pi pi-pencil">
                         </Button>
 
                         <Button class="p-button-tiny p-button-danger p-button-text"
-                                @click="store.confirmDelete(prop.data)"
                                 v-if="store.isViewLarge()"
+                                @click="store.deleteItem(prop.data)"
+                                v-tooltip.top="'Trash'"
                                 icon="pi pi-trash">
                         </Button>
 
