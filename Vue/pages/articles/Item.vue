@@ -41,12 +41,12 @@ onMounted(async () => {
 
 });
 
-//--------actions_menu
-const actions_menu = ref();
-const toggleActionsMenu = (event) => {
-    actions_menu.value.toggle(event);
+//--------toggle item menu
+const item_menu_state = ref();
+const toggleItemMenu = (event) => {
+    item_menu_state.value.toggle(event);
 };
-//--------end of actions_menu
+//--------/toggle item menu
 
 </script>
 <template>
@@ -75,25 +75,22 @@ const toggleActionsMenu = (event) => {
                             @click="store.toEdit(store.item)"
                             icon="pi pi-save"/>
 
-                    <!--bulk_actions-->
+                    <!--item menu-->
                     <Button
                         type="button"
-                        @click="toggleActionsMenu"
-                        aria-haspopup="true"
-                        aria-controls="actions_menu">
-                        <i class="pi pi-angle-down"></i>
-                    </Button>
+                        @click="toggleItemMenu"
+                        icon="pi pi-angle-down"
+                        aria-haspopup="true"/>
 
-                    <Menu ref="actions_menu"
+                    <Menu ref="item_menu_state"
                           :model="store.item_menu_list"
                           :popup="true" />
-                    <!--end of bulk_actions-->
-
+                    <!--/item menu-->
 
                     <Button class="p-button-primary"
                             icon="pi pi-times"
-                            @click="store.toList()">
-                    </Button>
+                            @click="store.toList()"/>
+
                 </div>
 
 

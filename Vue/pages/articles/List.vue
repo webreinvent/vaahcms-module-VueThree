@@ -14,11 +14,33 @@ const confirm = useConfirm();
 
 
 onMounted(async () => {
+    /**
+     * call onLoad action when List view loads
+     */
     await store.onLoad(route);
+
+    /**
+     * watch routes to update view, column width
+     * and get new item when routes get changed
+     */
     await store.watchRoutes(route);
-    await store.setConfirmDialog(confirm);
+
+    /**
+     * watch states like `query.filter` to
+     * call specific actions if a state gets
+     * changed
+     */
     await store.watchStates();
+
+    /**
+     * fetch assets required for the crud
+     * operation
+     */
     await store.getAssets();
+
+    /**
+     * fetch list of records
+     */
     await store.getList();
 });
 
