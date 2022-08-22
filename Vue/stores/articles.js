@@ -167,23 +167,72 @@ export const useArticlesStore = defineStore({
             }
         },
         //---------------------------------------------------------------------
-        async getList() {
+        isListActionValid()
+        {
+            if(!this.action.type)
+            {
+                vaah().toastErrors(['Select an action type']);
+                return false;
+            }
+
+
+            if(this.action.type !== 'get-list' && this.action.items.length < 1)
+            {
+                vaah().toastErrors(['Select records']);
+                return false;
+            }
+
+            return true;
+        },
+        //---------------------------------------------------------------------
+        async listAction(type='get-list'){
+
+            this.action.type = type;
+
+            if(!this.isListActionValid())
+            {
+                return false;
+            }
+
+            let method = 'get';
+            let show_success = false;
+
+            switch (type){
+                case 'update':
+                    method = 'put';
+                    break;
+
+            }
+
             let options = {
-                query: vaah().clone(this.query)
+                params: this.action,
+                method: method,
+                show_success: show_success
             };
 
-            await vaah().ajax(
+            vaah().ajax(
                 this.ajax_url,
-                this.afterGetList,
+                this.listActionsAfter,
                 options
             );
         },
+
         //---------------------------------------------------------------------
-        afterGetList: function (data, res)
-        {
+        async listActionsAfter(data, res) {
             if(data)
             {
-                this.list = data;
+                this.action = vaah().clone(this.empty_action);
+
+                if(this.action.type !== 'get-list')
+                {
+                    await this.getList();
+                }
+
+                if(this.action.type === 'get-list' && data)
+                {
+                    this.list = data;
+                }
+
             }
         },
         //---------------------------------------------------------------------

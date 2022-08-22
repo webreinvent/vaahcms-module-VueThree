@@ -41,7 +41,7 @@ onMounted(async () => {
     /**
      * fetch list of records
      */
-    await store.getList();
+    await store.listAction('get-list');
 });
 
 </script>
