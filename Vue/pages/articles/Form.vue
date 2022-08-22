@@ -54,12 +54,12 @@ const toggleFormMenu = (event) => {
                 <div class="p-inputgroup">
                     <Button label="Save"
                             v-if="store.item && store.item.id"
-                            @click="store.setFormAction('save')"
+                            @click="store.itemAction('save')"
                             icon="pi pi-save"/>
 
-                    <Button label="Save & New"
+                    <Button label="Create & New"
                             v-else
-                            @click="store.setFormAction('save-and-new')"
+                            @click="store.itemAction('create-and-new')"
                             icon="pi pi-save"/>
 
 

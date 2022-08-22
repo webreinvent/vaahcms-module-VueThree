@@ -167,6 +167,48 @@ export const useArticlesStore = defineStore({
             }
         },
         //---------------------------------------------------------------------
+        async getList() {
+            let options = {
+                query: vaah().clone(this.query)
+            };
+
+            await vaah().ajax(
+                this.ajax_url,
+                this.afterGetList,
+                options
+            );
+        },
+        //---------------------------------------------------------------------
+        afterGetList: function (data, res)
+        {
+            if(data)
+            {
+                this.list = data;
+            }
+        },
+        //---------------------------------------------------------------------
+
+        async getItem(id) {
+            if(id){
+                vaah().ajax(
+                    ajax_url+'/'+id,
+                    this.getItemAfter
+                );
+            }
+        },
+        //---------------------------------------------------------------------
+        getItemAfter(data, res)
+        {
+            if(data)
+            {
+                this.item = data;
+            }else{
+                this.$router.push({name: 'articles.index'});
+            }
+            this.getItemMenu();
+            this.getFormMenu();
+        },
+        //---------------------------------------------------------------------
         isListActionValid()
         {
             if(!this.action.type)
@@ -174,7 +216,6 @@ export const useArticlesStore = defineStore({
                 vaah().toastErrors(['Select an action type']);
                 return false;
             }
-
 
             if(this.action.type !== 'get-list' && this.action.items.length < 1)
             {
@@ -185,7 +226,7 @@ export const useArticlesStore = defineStore({
             return true;
         },
         //---------------------------------------------------------------------
-        async listAction(type='get-list'){
+        async listAction(type){
 
             this.action.type = type;
 
@@ -221,31 +262,44 @@ export const useArticlesStore = defineStore({
             if(data)
             {
                 this.action = vaah().clone(this.empty_action);
-
-                if(this.action.type !== 'get-list')
-                {
-                    await this.listAction('get-list');
-                }
-
-                if(this.action.type === 'get-list' && data)
-                {
-                    this.list = data;
-                }
-
             }
         },
         //---------------------------------------------------------------------
-        itemAction(type='create', item=null){
-
+        itemAction(type, item=null){
             if(!item)
             {
                 item = this.item;
             }
 
+            let ajax_url = this.ajax_url;
+
             let options = {
-                params: this.item,
                 method: 'post',
+                params: item,
             };
+
+            switch (type)
+            {
+                case 'save-and-new':
+                    options.method = 'post';
+                    this.setActiveItemAsEmpty();
+                    break;
+                case 'save':
+                    options.method = 'put';
+                    ajax_url += '/'+item.id
+                    break;
+                case 'save-and-close':
+                    this.setActiveItemAsEmpty();
+                    this.$router.push({name: 'articles.index'});
+                    break;
+                case 'create-and-clone':
+                    break;
+                case 'delete':
+                    options.method = 'delete';
+                    ajax_url += '/'+item.id
+                    break;
+            }
+
             vaah().ajax(
                 ajax_url,
                 this.itemActionAfter,
@@ -253,100 +307,40 @@ export const useArticlesStore = defineStore({
             );
         },
         //---------------------------------------------------------------------
-        itemActionAfter(data, res)
+        async itemActionAfter(data, res)
         {
             if(data)
             {
-                this.listAction('get-list');
+                await this.getList();
                 this.performFormAction();
             }
         },
         //---------------------------------------------------------------------
-        async create() {
-
-            let options = {
-                params: this.item,
-                method: 'post',
-            };
-            vaah().ajax(
-                ajax_url,
-                this.afterCreate,
-                options
-            );
-        },
-        //---------------------------------------------------------------------
-        afterCreate(data, res)
+        performFormAction: function ()
         {
-            if(data)
+            switch (this.form.action)
             {
-                this.getList();
-                this.performFormAction();
-            }
-        },
-        //---------------------------------------------------------------------
-        async getItem(id) {
-            if(id){
-                vaah().ajax(
-                    ajax_url+'/'+id,
-                    this.getItemAfter
-                );
-            }
-
-        },
-        //---------------------------------------------------------------------
-        getItemAfter(data, res)
-        {
-            if(data)
-            {
-                this.item = data;
-            }else{
-                this.$router.push({name: 'articles.index'});
-            }
-            this.getItemMenu();
-            this.getFormMenu();
-        },
-        //---------------------------------------------------------------------
-        async store() {
-            let options = {
-                params: this.item,
-                method: 'put',
-            };
-            vaah().ajax(
-                ajax_url+'/'+this.item.id,
-                this.storeAfter,
-                options
-            );
-        },
-        //---------------------------------------------------------------------
-        storeAfter(data, res)
-        {
-            if(data)
-            {
-                this.getList();
-                this.performFormAction();
+                case 'save-and-new':
+                    this.setActiveItemAsEmpty();
+                    break;
+                case 'save-and-close':
+                    this.setActiveItemAsEmpty();
+                    this.$router.push({name: 'articles.index'});
+                    break;
+                case 'create-and-clone':
+                    break;
             }
         },
         //---------------------------------------------------------------------
         async paginate(event) {
             this.query.page = event.page+1;
-            this.getList();
+            await this.getList();
         },
         //---------------------------------------------------------------------
         async reload()
         {
             await this.getAssets();
             await this.getList();
-        },
-        //---------------------------------------------------------------------
-        async setFormAction(action)
-        {
-            this.form.action = action;
-            if(this.item.id)
-            {
-                await this.store();
-            } else{
-                await this.create();
-            }
         },
         //---------------------------------------------------------------------
         async getFaker () {
@@ -380,21 +374,7 @@ export const useArticlesStore = defineStore({
         },
 
         //---------------------------------------------------------------------
-        performFormAction: function ()
-        {
-            switch (this.form.action)
-            {
-                case 'save-and-new':
-                    this.setActiveItemAsEmpty();
-                    break;
-                case 'save-and-close':
-                    this.setActiveItemAsEmpty();
-                    this.$router.push({name: 'articles.index'});
-                    break;
-                case 'save-and-clone':
-                    break;
-            }
-        },
+
         //---------------------------------------------------------------------
         onItemSelection(items)
         {
@@ -404,64 +384,6 @@ export const useArticlesStore = defineStore({
         setActiveItemAsEmpty()
         {
             this.item = vaah().clone(this.assets.empty_item);
-        },
-        //---------------------------------------------------------------------
-        async updateList(type){
-            if(!type)
-            {
-                vaah().toastErrors(['Select an action type']);
-                return false;
-            }
-            this.action.type = type;
-            if(this.action.items.length < 1)
-            {
-                vaah().toastErrors(['Select records']);
-                return false;
-            }
-
-            let options = {
-                params: this.action,
-                method: 'put',
-                show_success: false
-            };
-            vaah().ajax(
-                this.ajax_url,
-                this.updateListAfter,
-                options
-            );
-        },
-
-        //---------------------------------------------------------------------
-        async updateListAfter(data, res) {
-            if(data)
-            {
-                this.action = vaah().clone(this.empty_action);
-                await this.getList();
-            }
-        },
-
-        //---------------------------------------------------------------------
-        async bulkUpdateList(type){
-
-            if(!type)
-            {
-                vaah().toastErrors(['Select an action type']);
-                return false;
-            }
-            this.action.type = type;
-
-            let options = {
-                params: this.action,
-                method: 'put',
-                show_success: false
-            };
-
-            vaah().ajax(
-                this.ajax_url,
-                this.updateListAfter,
-                options
-            );
-
         },
         //---------------------------------------------------------------------
         confirmDelete()
@@ -474,91 +396,6 @@ export const useArticlesStore = defineStore({
             vaah().confirmDialogDelete(this.deleteList);
         },
         //---------------------------------------------------------------------
-        async deleteList(){
-            this.action.type = 'delete';
-            if(this.action.items.length < 1)
-            {
-                vaah().toastErrors(['Select records']);
-                return false;
-            }
-            let options = {
-                params: this.action,
-                method: 'delete',
-                show_success: false
-            };
-            vaah().ajax(
-                this.ajax_url,
-                this.updateListAfter,
-                options
-            );
-        },
-        //---------------------------------------------------------------------
-        confirmDeleteItem()
-        {
-            vaah().confirmDialogDelete(this.deleteItem);
-        },
-        //---------------------------------------------------------------------
-        async deleteItem(item=null){
-
-            if(!item){
-                item = this.item;
-            }
-
-            let params = {
-                type: 'trash',
-                items: [
-                    item
-                ]
-            }
-            let options = {
-                params: params,
-                method: 'put',
-                show_success: false
-            };
-            vaah().ajax(
-                this.ajax_url,
-                this.updateListAfter,
-                options
-            );
-        },
-        //---------------------------------------------------------------------
-        deleteItemAfter()
-        {
-            this.updateListAfter();
-
-            if(this.route.params.id === this.item.id)
-            {
-                this.setActiveItemAsEmpty();
-                this.toList();
-            }
-
-        },
-        //---------------------------------------------------------------------
-        updateItem(action)
-        {
-            this.item['action'] = action;
-            let url = this.ajax_url+'/'+this.item.id;
-            let options = {
-                params: this.item,
-                method: 'patch'
-            };
-            vaah().ajax(
-                url,
-                this.updateItemAfter,
-                options
-            );
-        },
-        //---------------------------------------------------------------------
-        async updateItemAfter(data, res) {
-            if(data)
-            {
-                this.getList();
-                if(this.route.params && this.route.params.id){
-                    this.getItem(this.route.params.id);
-                }
-
-            }
-        },
         //---------------------------------------------------------------------
         async delayedSearch()
         {
@@ -668,25 +505,6 @@ export const useArticlesStore = defineStore({
             return this.view === 'large';
         },
         //---------------------------------------------------------------------
-        changeStatus(item)
-        {
-
-            let url = this.ajax_url+'/'+item.id;
-
-            let options = {
-                params: item,
-                method: 'put',
-                show_success: false
-            };
-            vaah().ajax(
-                url,
-                this.updateListAfter,
-                options
-            );
-        },
-        //---------------------------------------------------------------------
-
-        //---------------------------------------------------------------------
         getIdWidth()
         {
             let width = 50;
@@ -760,51 +578,76 @@ export const useArticlesStore = defineStore({
             this.item_menu_list = item_menu;
         },
         //---------------------------------------------------------------------
-        getFormMenu()
+        async getFormMenu()
         {
-
             let form_menu = [];
 
-            if(!this.item || !this.item.id)
+            if(this.item.id)
             {
-
-                form_menu.push({
-                    label: 'Save & Close',
-                    icon: 'pi pi-check',
-                    command: () => {
-                        this.form.action = 'save-and-close';
-                        if(this.item && this.item.id){
-                            this.store();
-                        }else{
-                            this.create();
+                form_menu = [
+                    {
+                        label: 'Save & Close',
+                        icon: 'pi pi-check',
+                        command: () => {
+                            this.form.action = 'save-and-close';
+                            this.itemAction(this.form.action);
                         }
+                    },
+                    {
+                        label: 'Save & Clone',
+                        icon: 'pi pi-copy',
+                        command: () => {
+                            this.form.action = 'save-and-clone';
+                            this.itemAction(this.form.action);
 
-                    }
-                },);
+                        }
+                    },
 
-                form_menu.push({
-                    label: 'Save & Clone',
-                    icon: 'pi pi-copy',
-                    command: () => {
-                        this.form.action = 'save-and-clone';
-                        if(this.item && this.item.id){
-                            this.store();
-                        }else{
-                            this.create();
+                    {
+                        label: 'Trash',
+                        icon: 'pi pi-times',
+                        command: () => {
+                            this.form.action = 'trash';
+                            this.itemAction(this.form.action);
+                        }
+                    },
+                    {
+                        label: 'Delete',
+                        icon: 'pi pi-trash',
+                        command: () => {
+                            this.form.action = 'delete';
+                            this.itemAction(this.form.action);
+                        }
+                    },
+                ];
+
+            } else{
+                form_menu = [
+                    {
+                        label: 'Create & Close',
+                        icon: 'pi pi-check',
+                        command: () => {
+                            this.form.action = 'create-and-close';
+                            this.itemAction(this.form.action);
+                        }
+                    },
+                    {
+                        label: 'Create & Clone',
+                        icon: 'pi pi-copy',
+                        command: () => {
+                            this.form.action = 'create-and-clone';
+                            this.itemAction(this.form.action);
+
+                        }
+                    },
+                    {
+                        label: 'Reset',
+                        icon: 'pi pi-refresh',
+                        command: () => {
+                            this.setActiveItemAsEmpty();
                         }
                     }
-                });
-
-
-                form_menu.push({
-                    label: 'Reset',
-                    icon: 'pi pi-refresh',
-                    command: () => {
-                        this.setActiveItem();
-                    }
-                });
-
-
+                ];
             }
 
             form_menu.push({
@@ -813,7 +656,7 @@ export const useArticlesStore = defineStore({
                 command: () => {
                     this.getFaker();
                 }
-            });
+            },)
 
             this.form_menu_list = form_menu;
         },

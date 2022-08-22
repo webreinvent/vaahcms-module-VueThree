@@ -76,7 +76,6 @@ class ArticlesController extends Controller
     {
         return Article::getItem($id);
     }
-
     //----------------------------------------------------------
     public function updateItem(Request $request,$id)
     {
