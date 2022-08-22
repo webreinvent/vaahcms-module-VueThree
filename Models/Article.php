@@ -292,13 +292,13 @@ class Article extends Model
                 self::whereIn('id', $items_id)->forceDelete();
                 break;
             case 'activate-all':
-                self::whereNull('is_active')->update(['is_active' => 1]);
+                self::query()->update(['is_active' => 1]);
                 break;
             case 'deactivate-all':
-                self::whereNotNull('is_active')->update(['is_active' => null]);
+                self::query()->update(['is_active' => null]);
                 break;
             case 'trash-all':
-                self::whereNull('deleted_at')->delete();
+                self::query()->delete();
                 break;
             case 'restore-all':
                 self::withTrashed()->restore();

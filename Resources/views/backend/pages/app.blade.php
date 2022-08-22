@@ -50,6 +50,10 @@
             border-color: var(--blue-600) !important;
         }
 
+        .p-toast{
+            z-index: 1000 !important;
+        }
+
         .p-container-toasts .p-toast-summary{
             display: none !important;
         }
@@ -68,6 +72,19 @@
         {
             display: none !important;
         }
+
+        .p-component-overlay-enter{
+            z-index: 40 !important;
+        }
+
+        .p-sidebar-active{
+            z-index: 50 !important;
+        }
+
+        .p-container-message .p-message-text{
+            width: 100%  !important;
+        }
+
     </style>
     <!--/primevue-->
 
