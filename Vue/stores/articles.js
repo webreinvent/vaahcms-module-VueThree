@@ -224,7 +224,7 @@ export const useArticlesStore = defineStore({
 
                 if(this.action.type !== 'get-list')
                 {
-                    await this.getList();
+                    await this.listAction('get-list');
                 }
 
                 if(this.action.type === 'get-list' && data)
@@ -253,9 +253,13 @@ export const useArticlesStore = defineStore({
             );
         },
         //---------------------------------------------------------------------
-        itemActionAfter()
+        itemActionAfter(data, res)
         {
-
+            if(data)
+            {
+                this.listAction('get-list');
+                this.performFormAction();
+            }
         },
         //---------------------------------------------------------------------
         async create() {
