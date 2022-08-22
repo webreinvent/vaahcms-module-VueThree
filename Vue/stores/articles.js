@@ -201,7 +201,6 @@ export const useArticlesStore = defineStore({
                 case 'update':
                     method = 'put';
                     break;
-
             }
 
             let options = {
@@ -234,6 +233,29 @@ export const useArticlesStore = defineStore({
                 }
 
             }
+        },
+        //---------------------------------------------------------------------
+        itemAction(type='create', item=null){
+
+            if(!item)
+            {
+                item = this.item;
+            }
+
+            let options = {
+                params: this.item,
+                method: 'post',
+            };
+            vaah().ajax(
+                ajax_url,
+                this.itemActionAfter,
+                options
+            );
+        },
+        //---------------------------------------------------------------------
+        itemActionAfter()
+        {
+
         },
         //---------------------------------------------------------------------
         async create() {

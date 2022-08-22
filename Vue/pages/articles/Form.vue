@@ -16,6 +16,13 @@ onMounted(async () => {
     store.getFormMenu();
 });
 
+//--------actions_menu
+const form_menu = ref();
+const toggleFormMenu = (event) => {
+    form_menu.value.toggle(event);
+};
+//--------end of actions_menu
+
 </script>
 <template>
 
@@ -56,21 +63,17 @@ onMounted(async () => {
                             icon="pi pi-save"/>
 
 
-                    <!--bulk_actions-->
+                    <!--form_menu-->
                     <Button
                         type="button"
-                        @click="toggleActionsMenu"
-                        aria-haspopup="true"
-                        aria-controls="actions_menu">
-                        <i class="pi pi-angle-down"></i>
-                    </Button>
+                        @click="toggleFormMenu"
+                        icon="pi pi-angle-down"
+                        aria-haspopup="true"/>
 
-                    <Menu ref="actions_menu"
+                    <Menu ref="form_menu"
                           :model="store.form_menu_list"
-                          :popup="true" >
-                    </Menu>
-
-                    <!--end of bulk_actions-->
+                          :popup="true" />
+                    <!--/form_menu-->
 
 
                     <Button class="p-button-primary"

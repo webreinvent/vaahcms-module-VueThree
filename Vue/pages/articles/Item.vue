@@ -75,7 +75,7 @@ const toggleItemMenu = (event) => {
                             @click="store.toEdit(store.item)"
                             icon="pi pi-save"/>
 
-                    <!--item menu-->
+                    <!--item_menu-->
                     <Button
                         type="button"
                         @click="toggleItemMenu"
@@ -85,7 +85,7 @@ const toggleItemMenu = (event) => {
                     <Menu ref="item_menu_state"
                           :model="store.item_menu_list"
                           :popup="true" />
-                    <!--/item menu-->
+                    <!--/item_menu-->
 
                     <Button class="p-button-primary"
                             icon="pi pi-times"
