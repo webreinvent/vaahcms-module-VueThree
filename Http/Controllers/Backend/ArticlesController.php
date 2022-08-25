@@ -87,6 +87,10 @@ class ArticlesController extends Controller
         return Article::deleteItem($request,$id);
     }
     //----------------------------------------------------------
+    public function itemAction(Request $request,$id,$action)
+    {
+        return Article::itemAction($request,$id,$action);
+    }
     //----------------------------------------------------------
 
 

@@ -10,7 +10,8 @@ const route = useRoute();
 onMounted(async () => {
 
     /**
-     * If record id is not set in url
+     * If record id is not set in url then
+     * redirect user to list view
      */
     if(route.params && !route.params.id)
     {
@@ -115,7 +116,7 @@ const toggleItemMenu = (event) => {
                         <div class="">
                             <Button label="Restore"
                                     class="p-button-sm"
-                                    @click="store.updateItem('restore')">
+                                    @click="store.itemAction('restore')">
                             </Button>
                         </div>
 

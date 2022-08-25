@@ -16,12 +16,12 @@ onMounted(async () => {
     store.getFormMenu();
 });
 
-//--------actions_menu
+//--------form_menu
 const form_menu = ref();
 const toggleFormMenu = (event) => {
     form_menu.value.toggle(event);
 };
-//--------end of actions_menu
+//--------/form_menu
 
 </script>
 <template>

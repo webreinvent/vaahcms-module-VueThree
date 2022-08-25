@@ -274,13 +274,15 @@ class Article extends Model
         }
 
 
+        $items = self::whereIn('id', $items_id)
+            ->withTrashed();
 
         switch ($inputs['type']) {
-            case 'inactive':
-                self::whereIn('id', $items_id)->update(['is_active' => null]);
+            case 'deactivate':
+                $items->update(['is_active' => null]);
                 break;
-            case 'active':
-                self::whereIn('id', $items_id)->update(['is_active' => 1]);
+            case 'activate':
+                $items->update(['is_active' => 1]);
                 break;
             case 'trash':
                 self::whereIn('id', $items_id)->delete();
@@ -348,7 +350,6 @@ class Article extends Model
 
         return $response;
     }
-
     //-------------------------------------------------
     public static function getItem($id)
     {
@@ -370,7 +371,6 @@ class Article extends Model
         return $response;
 
     }
-
     //-------------------------------------------------
     public static function updateItem($request, $id)
     {
@@ -406,31 +406,10 @@ class Article extends Model
         $update->slug = Str::slug($inputs['slug']);
         $update->save();
 
-        //check specific actions
-
-        if (isset($inputs['action'])) {
-            switch ($inputs['action']) {
-                case 'trash':
-                    $update->delete();
-                    break;
-                case 'restore':
-                    $update->restore();
-                    break;
-                case 'delete':
-                    $update->forceDelete();
-                    break;
-            }
-        }
-
-
-        $response['success'] = true;
-        $response['data'] = $update;
-        $response['messages'][] = 'Record has been updated';
+        $response = self::getItem($id);
 
         return $response;
-
     }
-
     //-------------------------------------------------
     public static function deleteItem($request, $id): array
     {
@@ -440,7 +419,6 @@ class Article extends Model
             $response['messages'][] = 'Record does not exist.';
             return $response;
         }
-
         $update->forceDelete();
 
         $response['success'] = true;
@@ -449,7 +427,33 @@ class Article extends Model
 
         return $response;
     }
+    //-------------------------------------------------
+    public static function itemAction($request, $id, $type): array
+    {
+        switch($type)
+        {
+            case 'activate':
+                self::where('id', $id)
+                    ->withTrashed()
+                    ->update(['is_active' => 1]);
+                break;
+            case 'deactivate':
+                self::where('id', $id)
+                    ->withTrashed()
+                    ->update(['is_active' => null]);
+                break;
+            case 'trash':
+                self::find($id)->delete();
+                break;
+            case 'restore':
+                self::where('id', $id)
+                    ->withTrashed()
+                    ->restore();
+                break;
+        }
 
+        return self::getItem($id);
+    }
     //-------------------------------------------------
 
     public static function validation($inputs)
@@ -476,7 +480,8 @@ class Article extends Model
     //-------------------------------------------------
     public static function getActiveItems()
     {
-        $item = self::where('is_active', 1)->get();
+        $item = self::where('is_active', 1)
+            ->first();
         return $item;
     }
 

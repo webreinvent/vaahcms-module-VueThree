@@ -58,6 +58,8 @@ export const useArticlesStore = defineStore({
         },
         is_list_loading: null,
         count_filters: 0,
+        list_selected_menu: [],
+        list_bulk_menu: [],
         item_menu_list: [],
         item_menu_state: null,
         form_menu_list: []
@@ -171,7 +173,6 @@ export const useArticlesStore = defineStore({
             let options = {
                 query: vaah().clone(this.query)
             };
-
             await vaah().ajax(
                 this.ajax_url,
                 this.afterGetList,
@@ -190,14 +191,14 @@ export const useArticlesStore = defineStore({
 
         async getItem(id) {
             if(id){
-                vaah().ajax(
+                await vaah().ajax(
                     ajax_url+'/'+id,
                     this.getItemAfter
                 );
             }
         },
         //---------------------------------------------------------------------
-        getItemAfter(data, res)
+        async getItemAfter(data, res)
         {
             if(data)
             {
@@ -206,18 +207,19 @@ export const useArticlesStore = defineStore({
                 this.$router.push({name: 'articles.index'});
             }
             this.getItemMenu();
-            this.getFormMenu();
+            await this.getFormMenu();
         },
         //---------------------------------------------------------------------
         isListActionValid()
         {
+
             if(!this.action.type)
             {
                 vaah().toastErrors(['Select an action type']);
                 return false;
             }
 
-            if(this.action.type !== 'get-list' && this.action.items.length < 1)
+            if(this.action.items.length < 1)
             {
                 vaah().toastErrors(['Select records']);
                 return false;
@@ -226,42 +228,44 @@ export const useArticlesStore = defineStore({
             return true;
         },
         //---------------------------------------------------------------------
-        async listAction(type){
+        async listAction(type = null){
 
-            this.action.type = type;
+            if(!type)
+            {
+                type = this.action.type;
+            }
 
             if(!this.isListActionValid())
             {
                 return false;
             }
 
-            let method = 'get';
-            let show_success = false;
+            let method = 'PUT';
 
-            switch (type){
-                case 'update':
-                    method = 'put';
+            switch (type)
+            {
+                case 'delete':
+                    method = 'DELETE';
                     break;
             }
 
             let options = {
                 params: this.action,
                 method: method,
-                show_success: show_success
+                show_success: false
             };
-
-            vaah().ajax(
+            await vaah().ajax(
                 this.ajax_url,
                 this.listActionsAfter,
                 options
             );
         },
-
         //---------------------------------------------------------------------
         async listActionsAfter(data, res) {
             if(data)
             {
                 this.action = vaah().clone(this.empty_action);
+                await this.getList();
             }
         },
         //---------------------------------------------------------------------
@@ -271,32 +275,59 @@ export const useArticlesStore = defineStore({
                 item = this.item;
             }
 
+            this.form.action = type;
+
             let ajax_url = this.ajax_url;
 
             let options = {
                 method: 'post',
-                params: item,
             };
 
+            /**
+             * Learn more about http request methods at
+             * https://www.youtube.com/watch?v=tkfVQK6UxDI
+             */
             switch (type)
             {
-                case 'save-and-new':
-                    options.method = 'post';
-                    this.setActiveItemAsEmpty();
-                    break;
-                case 'save':
-                    options.method = 'put';
-                    ajax_url += '/'+item.id
-                    break;
-                case 'save-and-close':
-                    this.setActiveItemAsEmpty();
-                    this.$router.push({name: 'articles.index'});
-                    break;
+                /**
+                 * Create a record, hence method is `POST`
+                 * https://docs.vaah.dev/guide/laravel.html#create-one-or-many-records
+                 */
+                case 'create-and-new':
+                case 'create-and-close':
                 case 'create-and-clone':
+                    options.method = 'POST';
+                    options.params = item;
                     break;
-                case 'delete':
-                    options.method = 'delete';
+
+                /**
+                 * Update a record with many columns, hence method is `PUT`
+                 * https://docs.vaah.dev/guide/laravel.html#update-a-record-update-soft-delete-status-change-etc
+                 */
+                case 'save':
+                case 'save-and-close':
+                case 'save-and-clone':
+                    options.method = 'PUT';
+                    options.params = item;
                     ajax_url += '/'+item.id
+                    break;
+                /**
+                 * Delete a record, hence method is `DELETE`
+                 * and no need to send entire `item` object
+                 * https://docs.vaah.dev/guide/laravel.html#delete-a-record-hard-deleted
+                 */
+                case 'delete':
+                    options.method = 'DELETE';
+                    ajax_url += '/'+item.id
+                    break;
+                /**
+                 * Update a record's one column or very few columns,
+                 * hence the method is `PATCH`
+                 * https://docs.vaah.dev/guide/laravel.html#update-a-record-update-soft-delete-status-change-etc
+                 */
+                default:
+                    options.method = 'PATCH';
+                    ajax_url += '/'+item.id+'/'+type;
                     break;
             }
 
@@ -311,24 +342,38 @@ export const useArticlesStore = defineStore({
         {
             if(data)
             {
+                this.item = data;
                 await this.getList();
-                this.performFormAction();
+                this.formActionAfter();
             }
         },
         //---------------------------------------------------------------------
-        performFormAction: function ()
+        formActionAfter: function ()
         {
             switch (this.form.action)
             {
+                case 'create-and-new':
                 case 'save-and-new':
                     this.setActiveItemAsEmpty();
                     break;
+                case 'create-and-close':
                 case 'save-and-close':
                     this.setActiveItemAsEmpty();
                     this.$router.push({name: 'articles.index'});
                     break;
-                case 'create-and-clone':
+                case 'save-and-clone':
+                    this.item.id = null;
                     break;
+            }
+        },
+        //---------------------------------------------------------------------
+        async toggleIsActive(item)
+        {
+            if(item.is_active)
+            {
+                await this.itemAction('activate', item);
+            } else{
+                await this.itemAction('deactivate', item);
             }
         },
         //---------------------------------------------------------------------
@@ -393,7 +438,8 @@ export const useArticlesStore = defineStore({
                 vaah().toastErrors(['Select a record']);
                 return false;
             }
-            vaah().confirmDialogDelete(this.deleteList);
+            this.action.type = 'delete';
+            vaah().confirmDialogDelete(this.listAction);
         },
         //---------------------------------------------------------------------
         //---------------------------------------------------------------------
@@ -540,6 +586,91 @@ export const useArticlesStore = defineStore({
             return text;
         },
         //---------------------------------------------------------------------
+        async getListSelectedMenu()
+        {
+            this.list_selected_menu = [
+                {
+                    label: 'Activate',
+                    command: async () => {
+                        await this.listAction('activate')
+                    }
+                },
+                {
+                    label: 'Deactivate',
+                    command: async () => {
+                        await this.listAction('deactivate')
+                    }
+                },
+                {
+                    separator: true
+                },
+                {
+                    label: 'Trash',
+                    icon: 'pi pi-times',
+                    command: async () => {
+                        await this.listAction('trash')
+                    }
+                },
+                {
+                    label: 'Restore',
+                    icon: 'pi pi-replay',
+                    command: async () => {
+                        await this.listAction('restore')
+                    }
+                },
+                {
+                    label: 'Delete',
+                    icon: 'pi pi-trash',
+                    command: () => {
+                        this.confirmDelete()
+                    }
+                },
+            ]
+
+        },
+        //---------------------------------------------------------------------
+        getListBulkMenu()
+        {
+            this.list_bulk_menu = [
+                {
+                    label: 'Mark all as active',
+                    command: () => {
+                        this.bulkUpdateList('activate-all')
+                    }
+                },
+                {
+                    label: 'Mark all as inactive',
+                    command: () => {
+                        this.bulkUpdateList('deactivate-all')
+                    }
+                },
+                {
+                    separator: true
+                },
+                {
+                    label: 'Trash All',
+                    icon: 'pi pi-times',
+                    command: () => {
+                        this.bulkUpdateList('trash-all')
+                    }
+                },
+                {
+                    label: 'Restore All',
+                    icon: 'pi pi-replay',
+                    command: () => {
+                        this.bulkUpdateList('restore-all')
+                    }
+                },
+                {
+                    label: 'Delete All',
+                    icon: 'pi pi-trash',
+                    command: () => {
+                        this.bulkUpdateList('delete-all')
+                    }
+                },
+            ];
+        },
+        //---------------------------------------------------------------------
         getItemMenu()
         {
             let item_menu = [];
@@ -582,33 +713,31 @@ export const useArticlesStore = defineStore({
         {
             let form_menu = [];
 
-            if(this.item.id)
+            if(this.item && this.item.id)
             {
                 form_menu = [
                     {
                         label: 'Save & Close',
                         icon: 'pi pi-check',
                         command: () => {
-                            this.form.action = 'save-and-close';
-                            this.itemAction(this.form.action);
+
+                            this.itemAction('save-and-close');
                         }
                     },
                     {
                         label: 'Save & Clone',
                         icon: 'pi pi-copy',
                         command: () => {
-                            this.form.action = 'save-and-clone';
-                            this.itemAction(this.form.action);
+
+                            this.itemAction('save-and-clone');
 
                         }
                     },
-
                     {
                         label: 'Trash',
                         icon: 'pi pi-times',
                         command: () => {
-                            this.form.action = 'trash';
-                            this.itemAction(this.form.action);
+                            this.itemAction('trash');
                         }
                     },
                     {
@@ -616,7 +745,7 @@ export const useArticlesStore = defineStore({
                         icon: 'pi pi-trash',
                         command: () => {
                             this.form.action = 'delete';
-                            this.itemAction(this.form.action);
+                            this.itemAction('delete');
                         }
                     },
                 ];
@@ -627,16 +756,15 @@ export const useArticlesStore = defineStore({
                         label: 'Create & Close',
                         icon: 'pi pi-check',
                         command: () => {
-                            this.form.action = 'create-and-close';
-                            this.itemAction(this.form.action);
+                            this.itemAction('create-and-close');
                         }
                     },
                     {
                         label: 'Create & Clone',
                         icon: 'pi pi-copy',
                         command: () => {
-                            this.form.action = 'create-and-clone';
-                            this.itemAction(this.form.action);
+
+                            this.itemAction('create-and-clone');
 
                         }
                     },
@@ -659,6 +787,7 @@ export const useArticlesStore = defineStore({
             },)
 
             this.form_menu_list = form_menu;
+
         },
         //---------------------------------------------------------------------
     }

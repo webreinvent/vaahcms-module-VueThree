@@ -56,9 +56,9 @@ const useVaah = vaah();
 
                 <template #body="prop">
                     <InputSwitch v-model.bool="prop.data.is_active"
-                                 @input="store.changeStatus(prop.data)"
+                                 v-bind:false-value="0"  v-bind:true-value="1"
                                  class="p-inputswitch-sm"
-                                 v-bind:false-value="0"  v-bind:true-value="1" >
+                                 @input="store.toggleIsActive(prop.data)">
                     </InputSwitch>
                 </template>
 
@@ -85,7 +85,7 @@ const useVaah = vaah();
 
                         <Button class="p-button-tiny p-button-danger p-button-text"
                                 v-if="store.isViewLarge()"
-                                @click="store.deleteItem(prop.data)"
+                                @click="store.itemAction('trash', prop.data)"
                                 v-tooltip.top="'Trash'"
                                 icon="pi pi-trash">
                         </Button>

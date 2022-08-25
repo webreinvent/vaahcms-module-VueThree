@@ -49,6 +49,13 @@ function () {
      */
     Route::delete('/{id}', 'ArticlesController@deleteItem')
         ->name('vh.backend.vuethree.articles.delete');
+
+    /**
+     * Other actions
+     */
+    Route::match(['put', 'patch'], '/{id}/{action}', 'ArticlesController@itemAction')
+        ->name('vh.backend.vuethree.articles.item.action');
+
     //---------------------------------------------------------
 
 });

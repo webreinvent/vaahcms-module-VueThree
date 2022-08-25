@@ -42,7 +42,7 @@ export const vaah = defineStore({
             }
 
             let params = default_option.params;
-            let method = default_option.method;
+            let method = default_option.method.toLowerCase();
             let query = default_option.query;
             let headers = default_option.headers;
             let show_success = default_option.show_success;
