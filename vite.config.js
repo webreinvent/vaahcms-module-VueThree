@@ -22,7 +22,7 @@ export default defineConfig({
         chunkSizeWarningLimit: 1600,
         target: "esnext",
         lib: {
-            entry: resolve(__dirname, 'Vue/app.js'),
+            entry: resolve(__dirname, 'Vue/main.js'),
         },
         outDir: 'Resources/assets/build/',
         rollupOptions: {
