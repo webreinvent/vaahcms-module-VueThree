@@ -1,4 +1,5 @@
 import path from 'path'
+import { resolve } from 'path'
 import {fileURLToPath, URL} from 'url'
 
 import {defineConfig} from 'vite'
@@ -11,15 +12,18 @@ export default defineConfig({
     plugins: [
         vue(),
     ],
-    resolve: {
+    /*resolve: {
         alias: {
             '@': fileURLToPath(new URL('./Vue', import.meta.url))
         }
-    },
+    },*/
 
     build: {
         chunkSizeWarningLimit: 1600,
         target: "esnext",
+        lib: {
+            entry: resolve(__dirname, 'Vue/app.js'),
+        },
         outDir: 'Resources/assets/build/',
         rollupOptions: {
             output: {
