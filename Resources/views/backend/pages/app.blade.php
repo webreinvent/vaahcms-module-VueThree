@@ -32,9 +32,7 @@
             font-size: 0.95rem  !important;
         }
         .primevue table td, .primevue table th{
-
             vertical-align: middle !important;
-
         }
 
         .p-datatable .p-inputswitch{

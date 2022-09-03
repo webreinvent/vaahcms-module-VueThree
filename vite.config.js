@@ -12,18 +12,20 @@ export default defineConfig({
     plugins: [
         vue(),
     ],
-    /*resolve: {
+    resolve: {
         alias: {
             '@': fileURLToPath(new URL('./Vue', import.meta.url))
         }
-    },*/
+    },
 
     build: {
         chunkSizeWarningLimit: 1600,
         target: "esnext",
-        lib: {
+        /*lib: {
             entry: resolve(__dirname, 'Vue/main.js'),
-        },
+            name: 'MyApp',
+
+        },*/
         outDir: 'Resources/assets/build/',
         rollupOptions: {
             output: {
