@@ -62,6 +62,11 @@ class ArticlesController extends Controller
         return Article::updateList($request);
     }
     //----------------------------------------------------------
+    public function listAction(Request $request, $type)
+    {
+        return Article::listAction($request, $type);
+    }
+    //----------------------------------------------------------
     public function deleteList(Request $request)
     {
         return Article::deleteList($request);
@@ -76,7 +81,6 @@ class ArticlesController extends Controller
     {
         return Article::getItem($id);
     }
-
     //----------------------------------------------------------
     public function updateItem(Request $request,$id)
     {
@@ -88,6 +92,10 @@ class ArticlesController extends Controller
         return Article::deleteItem($request,$id);
     }
     //----------------------------------------------------------
+    public function itemAction(Request $request,$id,$action)
+    {
+        return Article::itemAction($request,$id,$action);
+    }
     //----------------------------------------------------------
 
 

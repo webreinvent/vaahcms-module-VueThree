@@ -16,6 +16,13 @@ onMounted(async () => {
     store.getFormMenu();
 });
 
+//--------form_menu
+const form_menu = ref();
+const toggleFormMenu = (event) => {
+    form_menu.value.toggle(event);
+};
+//--------/form_menu
+
 </script>
 <template>
 
@@ -47,30 +54,26 @@ onMounted(async () => {
                 <div class="p-inputgroup">
                     <Button label="Save"
                             v-if="store.item && store.item.id"
-                            @click="store.setFormAction('save')"
+                            @click="store.itemAction('save')"
                             icon="pi pi-save"/>
 
-                    <Button label="Save & New"
+                    <Button label="Create & New"
                             v-else
-                            @click="store.setFormAction('save-and-new')"
+                            @click="store.itemAction('create-and-new')"
                             icon="pi pi-save"/>
 
 
-                    <!--bulk_actions-->
+                    <!--form_menu-->
                     <Button
                         type="button"
-                        @click="toggleActionsMenu"
-                        aria-haspopup="true"
-                        aria-controls="actions_menu">
-                        <i class="pi pi-angle-down"></i>
-                    </Button>
+                        @click="toggleFormMenu"
+                        icon="pi pi-angle-down"
+                        aria-haspopup="true"/>
 
-                    <Menu ref="actions_menu"
+                    <Menu ref="form_menu"
                           :model="store.form_menu_list"
-                          :popup="true" >
-                    </Menu>
-
-                    <!--end of bulk_actions-->
+                          :popup="true" />
+                    <!--/form_menu-->
 
 
                     <Button class="p-button-primary"

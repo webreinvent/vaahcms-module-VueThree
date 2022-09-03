@@ -16,12 +16,12 @@ const items = ref([
         items: [
             {
             label: 'Dashboard',
-            icon: 'fa-solid fa-plus',
+            icon: 'fa-regular fa-chart-bar',
             to: "/"
             },
             {
                 label: 'Articles',
-                icon: 'fa-solid fa-blog',
+                icon: 'fa-regular fa-rectangle-list',
                 to: "/articles"
             },
         ]

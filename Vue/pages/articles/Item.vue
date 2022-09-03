@@ -10,7 +10,8 @@ const route = useRoute();
 onMounted(async () => {
 
     /**
-     * If record id is not set in url
+     * If record id is not set in url then
+     * redirect user to list view
      */
     if(route.params && !route.params.id)
     {
@@ -21,13 +22,16 @@ onMounted(async () => {
     /**
      * Fetch the record from the database
      */
-    await store.getItem(route.params.id);
+    if(!store.item)
+    {
+        await store.getItem(route.params.id);
+    }
 
     /**
      * Watch if url record id is changed, if changed
-     * then fetch the new record from database
+     * then fetch the new records from database
      */
-    watch(route, async (newVal,oldVal) =>
+    /*watch(route, async (newVal,oldVal) =>
         {
             if(newVal.params && !newVal.params.id
                 && newVal.name === 'articles.view')
@@ -37,7 +41,7 @@ onMounted(async () => {
             }
             await store.getItem(route.params.id);
         }, { deep: true }
-    )
+    )*/
 
 });
 
@@ -75,7 +79,7 @@ const toggleItemMenu = (event) => {
                             @click="store.toEdit(store.item)"
                             icon="pi pi-save"/>
 
-                    <!--item menu-->
+                    <!--item_menu-->
                     <Button
                         type="button"
                         @click="toggleItemMenu"
@@ -85,7 +89,7 @@ const toggleItemMenu = (event) => {
                     <Menu ref="item_menu_state"
                           :model="store.item_menu_list"
                           :popup="true" />
-                    <!--/item menu-->
+                    <!--/item_menu-->
 
                     <Button class="p-button-primary"
                             icon="pi pi-times"
@@ -115,7 +119,7 @@ const toggleItemMenu = (event) => {
                         <div class="">
                             <Button label="Restore"
                                     class="p-button-sm"
-                                    @click="store.updateItem('restore')">
+                                    @click="store.itemAction('restore')">
                             </Button>
                         </div>
 
