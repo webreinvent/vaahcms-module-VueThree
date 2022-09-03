@@ -74,21 +74,26 @@ const useVaah = vaah();
                         <Button class="p-button-tiny p-button-text"
                                 v-tooltip.top="'View'"
                                 @click="store.toView(prop.data)"
-                                icon="pi pi-eye">
-                        </Button>
+                                icon="pi pi-eye" />
 
                         <Button class="p-button-tiny p-button-text"
                                 v-tooltip.top="'Update'"
                                 @click="store.toEdit(prop.data)"
-                                icon="pi pi-pencil">
-                        </Button>
+                                icon="pi pi-pencil" />
 
                         <Button class="p-button-tiny p-button-danger p-button-text"
-                                v-if="store.isViewLarge()"
+                                v-if="store.isViewLarge() && !prop.data.deleted_at"
                                 @click="store.itemAction('trash', prop.data)"
                                 v-tooltip.top="'Trash'"
-                                icon="pi pi-trash">
-                        </Button>
+                                icon="pi pi-trash" />
+
+
+                        <Button class="p-button-tiny p-button-success p-button-text"
+                                v-if="store.isViewLarge() && prop.data.deleted_at"
+                                @click="store.itemAction('restore', prop.data)"
+                                v-tooltip.top="'Restore'"
+                                icon="pi pi-replay" />
+
 
                     </div>
 

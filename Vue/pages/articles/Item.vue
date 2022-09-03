@@ -22,13 +22,16 @@ onMounted(async () => {
     /**
      * Fetch the record from the database
      */
-    await store.getItem(route.params.id);
+    if(!store.item)
+    {
+        await store.getItem(route.params.id);
+    }
 
     /**
      * Watch if url record id is changed, if changed
-     * then fetch the new record from database
+     * then fetch the new records from database
      */
-    watch(route, async (newVal,oldVal) =>
+    /*watch(route, async (newVal,oldVal) =>
         {
             if(newVal.params && !newVal.params.id
                 && newVal.name === 'articles.view')
@@ -38,7 +41,7 @@ onMounted(async () => {
             }
             await store.getItem(route.params.id);
         }, { deep: true }
-    )
+    )*/
 
 });
 

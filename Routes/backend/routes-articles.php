@@ -23,12 +23,14 @@ function () {
      * Update List
      */
     Route::match(['put', 'patch'], '/', 'ArticlesController@updateList')
-        ->name('vh.backend.vuethree.articles.list.updates');
+        ->name('vh.backend.vuethree.articles.list.update');
     /**
      * Delete List
      */
     Route::delete('/', 'ArticlesController@deleteList')
         ->name('vh.backend.vuethree.articles.list.delete');
+
+
     /**
      * Create Item
      */
@@ -51,9 +53,15 @@ function () {
         ->name('vh.backend.vuethree.articles.delete');
 
     /**
-     * Other actions
+     * List Actions
      */
-    Route::match(['put', 'patch'], '/{id}/{action}', 'ArticlesController@itemAction')
+    Route::any('/action/{action}', 'ArticlesController@listAction')
+        ->name('vh.backend.vuethree.articles.list.actions');
+
+    /**
+     * Item actions
+     */
+    Route::any('/{id}/action/{action}', 'ArticlesController@itemAction')
         ->name('vh.backend.vuethree.articles.item.action');
 
     //---------------------------------------------------------

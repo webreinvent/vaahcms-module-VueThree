@@ -170,7 +170,10 @@ class Article extends Model
     public function scopeIsActiveFilter($query, $filter)
     {
 
-        if(!isset($filter['is_active']))
+        if(!isset($filter['is_active'])
+            || is_null($filter['is_active'])
+            || $filter['is_active'] === 'null'
+        )
         {
             return $query;
         }
@@ -290,24 +293,6 @@ class Article extends Model
             case 'restore':
                 self::whereIn('id', $items_id)->restore();
                 break;
-            case 'delete':
-                self::whereIn('id', $items_id)->forceDelete();
-                break;
-            case 'activate-all':
-                self::query()->update(['is_active' => 1]);
-                break;
-            case 'deactivate-all':
-                self::query()->update(['is_active' => null]);
-                break;
-            case 'trash-all':
-                self::query()->delete();
-                break;
-            case 'restore-all':
-                self::withTrashed()->restore();
-                break;
-            case 'delete-all':
-                self::withTrashed()->forceDelete();
-                break;
         }
 
         $response['success'] = true;
@@ -318,7 +303,7 @@ class Article extends Model
     }
 
     //-------------------------------------------------
-    public static function deleteList($request)
+    public static function deleteList($request): array
     {
         $inputs = $request->all();
 
@@ -343,6 +328,71 @@ class Article extends Model
 
         $items_id = collect($inputs['items'])->pluck('id')->toArray();
         self::whereIn('id', $items_id)->forceDelete();
+
+        $response['success'] = true;
+        $response['data'] = true;
+        $response['messages'][] = 'Action was successful.';
+
+        return $response;
+    }
+    //-------------------------------------------------
+    public static function listAction($request, $type): array
+    {
+        $inputs = $request->all();
+
+        if(isset($inputs['items']))
+        {
+            $items_id = collect($inputs['items'])
+                ->pluck('id')
+                ->toArray();
+
+            $items = self::whereIn('id', $items_id)
+                ->withTrashed();
+        }
+
+
+        switch ($type) {
+            case 'deactivate':
+                if($items->count() > 0) {
+                    $items->update(['is_active' => null]);
+                }
+                break;
+            case 'activate':
+                if($items->count() > 0) {
+                    $items->update(['is_active' => 1]);
+                }
+                break;
+            case 'trash':
+                if(isset($items_id) && count($items_id) > 0) {
+                    self::whereIn('id', $items_id)->delete();
+                }
+                break;
+            case 'restore':
+                if(isset($items_id) && count($items_id) > 0) {
+                    self::whereIn('id', $items_id)->restore();
+                }
+                break;
+            case 'delete':
+                if(isset($items_id) && count($items_id) > 0) {
+                    self::whereIn('id', $items_id)->forceDelete();
+                }
+                break;
+            case 'activate-all':
+                self::query()->update(['is_active' => 1]);
+                break;
+            case 'deactivate-all':
+                self::query()->update(['is_active' => null]);
+                break;
+            case 'trash-all':
+                self::query()->delete();
+                break;
+            case 'restore-all':
+                self::withTrashed()->restore();
+                break;
+            case 'delete-all':
+                self::withTrashed()->forceDelete();
+                break;
+        }
 
         $response['success'] = true;
         $response['data'] = true;
@@ -413,13 +463,13 @@ class Article extends Model
     //-------------------------------------------------
     public static function deleteItem($request, $id): array
     {
-        $update = self::where('id', $id)->withTrashed()->first();
-        if (!$update) {
+        $item = self::where('id', $id)->withTrashed()->first();
+        if (!$item) {
             $response['success'] = false;
             $response['messages'][] = 'Record does not exist.';
             return $response;
         }
-        $update->forceDelete();
+        $item->forceDelete();
 
         $response['success'] = true;
         $response['data'] = [];
