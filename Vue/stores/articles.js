@@ -7,7 +7,7 @@ let model_namespace = 'VaahCms\\Modules\\VueThree\\Models\\Article';
 
 
 let base_url = document.getElementsByTagName('base')[0].getAttribute("href");
-let ajax_url = base_url + "/backend/vuethree/articles";
+let ajax_url = base_url + "/vuethree/articles";
 
 let empty_states = {
     query: {

@@ -16,7 +16,7 @@ class ExtendController extends Controller
     {
         $links = [];
 
-        $response['status'] = 'success';
+        $response['success'] = true;
         $response['data'] = $links;
 
         return $response;
@@ -27,7 +27,7 @@ class ExtendController extends Controller
     {
         $links = [];
 
-        $response['status'] = 'success';
+        $response['success'] = true;
         $response['data'] = $links;
 
         return $response;
@@ -38,12 +38,19 @@ class ExtendController extends Controller
         $links = [];
 
         $links[0] = [
-            'link' => route('vh.backend.vuethree'),
             'icon' => 'cubes',
             'label'=> 'VueThree'
         ];
 
-        $response['status'] = 'success';
+
+        if(version_compare(config('vaahcms.version'), '2.0.0', '<' )){
+            $links[0]['link'] = route('vh.backend.vuethree');
+        } else{
+            $links[0]['url'] = route('vh.backend.vuethree');
+        }
+
+
+        $response['success'] = true;
         $response['data'] = $links;
 
         return $response;

@@ -17,14 +17,9 @@ onMounted(async () => {
 
 <template>
 
-
     <div class="grid">
-        <div class="col-2"><Aside/></div>
+        <div class="col-fixed" style="width:212px;"><Aside/></div>
         <div class="col"><RouterView /></div>
     </div>
-
-
-
-
 
 </template>
